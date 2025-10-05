@@ -10,15 +10,22 @@ repositories {
     mavenCentral()
 }
 
+val springVersion: String by project
+val jakartaServletApiVersion: String by project
 val junitVersion: String by project
 
 dependencies {
+    implementation("org.springframework:spring-context:$springVersion")
+    implementation("org.springframework:spring-webmvc:$springVersion")
+
+    compileOnly("jakarta.servlet:jakarta.servlet-api:$jakartaServletApiVersion")
+
     testImplementation(platform("org.junit:junit-bom:$junitVersion"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
 tasks.war {
-    archiveBaseName.set("my-blog-backend-app")
+    archiveFileName.set("my-blog-back-app.war")
 }
 
 tasks.test {
