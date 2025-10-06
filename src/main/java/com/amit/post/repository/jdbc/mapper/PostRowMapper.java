@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-@Component
+@Component(value = "postRowMapper")
 public final class PostRowMapper implements RowMapper<Post> {
 
     @Override
