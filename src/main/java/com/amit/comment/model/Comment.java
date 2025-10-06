@@ -6,7 +6,7 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import java.util.Objects;
 
-@Table(value = "comments")
+@Table(schema = "my_blog", value = "comments")
 public final class Comment {
 
     @Id

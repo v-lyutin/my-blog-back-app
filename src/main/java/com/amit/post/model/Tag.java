@@ -6,7 +6,7 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import java.util.Objects;
 
-@Table(value = "tags")
+@Table(schema = "my_blog", value = "tags")
 public final class Tag {
 
     @Id

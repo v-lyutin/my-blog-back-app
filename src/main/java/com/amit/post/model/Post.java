@@ -8,7 +8,7 @@ import org.springframework.data.relational.core.mapping.Table;
 import java.util.Objects;
 import java.util.Set;
 
-@Table(value = "posts")
+@Table(schema = "my_blog", value = "posts")
 public final class Post {
 
     @Id

@@ -14,12 +14,14 @@ val springCoreVersion: String by project
 val springDataJdbcVersion: String by project
 val jakartaServletApiVersion: String by project
 val junitVersion: String by project
+val postgresqlVersion: String by project
 
 dependencies {
     implementation("org.springframework:spring-context:$springCoreVersion")
     implementation("org.springframework:spring-webmvc:$springCoreVersion")
     implementation("org.springframework:spring-jdbc:$springCoreVersion")
     implementation("org.springframework.data:spring-data-jdbc:$springDataJdbcVersion")
+    implementation("org.postgresql:postgresql:$postgresqlVersion")
 
     compileOnly("jakarta.servlet:jakarta.servlet-api:$jakartaServletApiVersion")
 

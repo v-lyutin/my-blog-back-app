@@ -5,7 +5,7 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import java.util.Objects;
 
-@Table(value = "post_tag")
+@Table(schema = "my_blog", value = "post_tag")
 public final class PostTagReference {
 
     @Column("tag_id")
