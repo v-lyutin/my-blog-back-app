@@ -11,7 +11,7 @@ public final class Comment {
 
     @Id
     @Column(value = "id")
-    private long id;
+    private Long id;
 
     @Column(value = "text")
     private String text;
