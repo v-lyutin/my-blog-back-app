@@ -13,12 +13,12 @@ public final class Post {
 
     @Id
     @Column(value = "id")
-    private long id;
+    private Long id;
 
     @Column(value = "title")
     private String title;
 
-    @Column(value = "title")
+    @Column(value = "text")
     private String text;
 
     @MappedCollection(idColumn = "post_id")
@@ -86,7 +86,7 @@ public final class Post {
             return false;
         }
         Post otherPost = (Post) otherObject;
-        return this.id == otherPost.id
+        return Objects.equals(this.id, otherPost.id)
                 && this.likesCount == otherPost.likesCount
                 && this.commentsCount == otherPost.commentsCount
                 && Objects.equals(this.title, otherPost.title)
