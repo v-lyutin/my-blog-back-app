@@ -2,11 +2,9 @@ package com.amit.post.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.util.Objects;
-import java.util.Set;
 
 @Table(schema = "my_blog", value = "posts")
 public final class Post {
@@ -20,9 +18,6 @@ public final class Post {
 
     @Column(value = "text")
     private String text;
-
-    @MappedCollection(idColumn = "post_id")
-    private Set<PostTagReference> tags;
 
     @Column(value = "likes_count")
     private long likesCount;
@@ -56,14 +51,6 @@ public final class Post {
         this.text = text;
     }
 
-    public Set<PostTagReference> getTags() {
-        return this.tags;
-    }
-
-    public void setTags(Set<PostTagReference> tags) {
-        this.tags = tags;
-    }
-
     public long getLikesCount() {
         return this.likesCount;
     }
@@ -90,13 +77,12 @@ public final class Post {
                 && this.likesCount == otherPost.likesCount
                 && this.commentsCount == otherPost.commentsCount
                 && Objects.equals(this.title, otherPost.title)
-                && Objects.equals(this.text, otherPost.text)
-                && Objects.equals(this.tags, otherPost.tags);
+                && Objects.equals(this.text, otherPost.text);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.id, this.title, this.text, this.tags, this.likesCount, this.commentsCount);
+        return Objects.hash(this.id, this.title, this.text, this.likesCount, this.commentsCount);
     }
 
     @Override
@@ -105,7 +91,6 @@ public final class Post {
                 "id=" + this.id +
                 ", title='" + this.title + '\'' +
                 ", text='" + this.text + '\'' +
-                ", tags=" + this.tags +
                 ", likesCount=" + this.likesCount +
                 ", commentsCount=" + this.commentsCount +
                 '}';
