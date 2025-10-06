@@ -8,7 +8,7 @@ public final class PostQueryHolder {
         WHERE id = :id
         """;
 
-    public static final String CREATE_POST = """
+    public static final String SAVE_POST = """
         INSERT INTO posts (title, text)
         VALUES (:title, :text)
         RETURNING id, title, text, likes_count, comments_count

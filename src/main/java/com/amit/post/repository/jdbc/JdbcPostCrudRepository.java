@@ -4,6 +4,7 @@ import com.amit.post.model.Post;
 import com.amit.post.repository.PostCrudRepository;
 import com.amit.post.repository.jdbc.sql.PostQueryHolder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -20,7 +21,8 @@ public final class JdbcPostCrudRepository implements PostCrudRepository {
     private final RowMapper<Post> rowMapper;
 
     @Autowired
-    public JdbcPostCrudRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate, RowMapper<Post> rowMapper) {
+    public JdbcPostCrudRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate,
+                                  @Qualifier(value = "postRowMapper") RowMapper<Post> rowMapper) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
         this.rowMapper = rowMapper;
     }
@@ -40,7 +42,7 @@ public final class JdbcPostCrudRepository implements PostCrudRepository {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("title", post.getTitle())
                 .addValue("text", post.getText());
-        return this.namedParameterJdbcTemplate.queryForObject(PostQueryHolder.CREATE_POST, params, this.rowMapper);
+        return this.namedParameterJdbcTemplate.queryForObject(PostQueryHolder.SAVE_POST, params, this.rowMapper);
     }
 
     @Override
