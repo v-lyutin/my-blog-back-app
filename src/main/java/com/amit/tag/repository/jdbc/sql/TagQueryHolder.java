@@ -1,4 +1,4 @@
-package com.amit.post.repository.jdbc.sql;
+package com.amit.tag.repository.jdbc.sql;
 
 public final class TagQueryHolder {
 

@@ -1,6 +1,6 @@
-package com.amit.post.repository.jdbc.mapper;
+package com.amit.tag.repository.jdbc.mapper;
 
-import com.amit.post.model.Tag;
+import com.amit.tag.model.Tag;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;

@@ -1,4 +1,4 @@
-package com.amit.post.model;
+package com.amit.tag.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;

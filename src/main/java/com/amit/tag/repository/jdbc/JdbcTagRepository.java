@@ -1,8 +1,8 @@
-package com.amit.post.repository.jdbc;
+package com.amit.tag.repository.jdbc;
 
-import com.amit.post.model.Tag;
-import com.amit.post.repository.TagRepository;
-import com.amit.post.repository.jdbc.sql.TagQueryHolder;
+import com.amit.tag.model.Tag;
+import com.amit.tag.repository.TagRepository;
+import com.amit.tag.repository.jdbc.sql.TagQueryHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.RowMapper;

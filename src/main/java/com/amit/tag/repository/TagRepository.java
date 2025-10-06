@@ -1,6 +1,6 @@
-package com.amit.post.repository;
+package com.amit.tag.repository;
 
-import com.amit.post.model.Tag;
+import com.amit.tag.model.Tag;
 
 import java.util.Collection;
 import java.util.Set;
