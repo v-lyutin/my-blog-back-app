@@ -1,4 +1,4 @@
-package com.amit.configuration;
+package com.amit.common.configuration;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

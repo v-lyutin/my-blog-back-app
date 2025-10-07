@@ -14,7 +14,7 @@
     </context-param>
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>com.amit.configuration.RootConfiguration</param-value>
+        <param-value>com.amit.common.configuration.RootConfiguration</param-value>
     </context-param>
 
     <servlet>
@@ -26,7 +26,7 @@
         </init-param>
         <init-param>
             <param-name>contextConfigLocation</param-name>
-            <param-value>com.amit.configuration.WebConfiguration</param-value>
+            <param-value>com.amit.common.configuration.WebConfiguration</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
