@@ -33,4 +33,8 @@ public final class RawQueryParser {
         return new SearchCriteria(titleQuery, tagNames);
     }
 
+    private RawQueryParser() {
+        throw new UnsupportedOperationException();
+    }
+
 }
