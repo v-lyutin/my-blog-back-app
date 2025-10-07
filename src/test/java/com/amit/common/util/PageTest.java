@@ -22,7 +22,6 @@ class PageTest {
             "101, 10, 11",
             "25,  7,  4"
     })
-
     @DisplayName("lastPage is ceil(total/pageSize), but at least 1")
     void lastPage_isComputedCorrectly(long total, int pageSize, int expectedLastPage) {
         Page<Integer> page = new Page<>(List.of(1, 2), 1, pageSize, total);

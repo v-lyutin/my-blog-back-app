@@ -27,7 +27,7 @@ public final class Post {
 
     public Post() {}
 
-    public long getId() {
+    public Long getId() {
         return this.id;
     }
 
