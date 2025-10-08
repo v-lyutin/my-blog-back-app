@@ -1,4 +1,4 @@
-package com.amit.post.service.like;
+package com.amit.post.service;
 
 public interface PostLikeService {
 

@@ -1,4 +1,4 @@
-package com.amit.post.service.search.model;
+package com.amit.post.service.util;
 
 import java.util.Set;
 

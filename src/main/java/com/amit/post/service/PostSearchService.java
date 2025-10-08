@@ -1,4 +1,4 @@
-package com.amit.post.service.search;
+package com.amit.post.service;
 
 import com.amit.common.util.Page;
 import com.amit.post.model.PostView;

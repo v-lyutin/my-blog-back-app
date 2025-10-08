@@ -1,4 +1,4 @@
-package com.amit.post.service.crud;
+package com.amit.post.service;
 
 import com.amit.post.model.Post;
 import com.amit.post.model.PostView;

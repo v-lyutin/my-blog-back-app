@@ -1,6 +1,4 @@
-package com.amit.post.service.search.util;
-
-import com.amit.post.service.search.model.SearchCriteria;
+package com.amit.post.service.util;
 
 import java.util.*;
 

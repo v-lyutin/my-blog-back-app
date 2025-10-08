@@ -1,8 +1,9 @@
-package com.amit.post.service.image;
+package com.amit.post.service.impl;
 
 import com.amit.post.repository.PostImageRepository;
-import com.amit.post.service.image.exception.ImageNotFoundException;
-import com.amit.post.service.image.exception.ImageUpsertException;
+import com.amit.post.service.PostImageService;
+import com.amit.post.service.exception.ImageNotFoundException;
+import com.amit.post.service.exception.ImageUpsertException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

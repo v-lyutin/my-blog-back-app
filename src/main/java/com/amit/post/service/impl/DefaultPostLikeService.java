@@ -1,7 +1,8 @@
-package com.amit.post.service.like;
+package com.amit.post.service.impl;
 
 import com.amit.post.repository.PostLikeRepository;
-import com.amit.post.service.crud.exception.PostNotFoundException;
+import com.amit.post.service.PostLikeService;
+import com.amit.post.service.exception.PostNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

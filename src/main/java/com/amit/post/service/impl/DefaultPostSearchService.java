@@ -1,11 +1,12 @@
-package com.amit.post.service.search;
+package com.amit.post.service.impl;
 
 import com.amit.common.util.Page;
 import com.amit.post.model.Post;
 import com.amit.post.model.PostView;
 import com.amit.post.repository.PostSearchRepository;
-import com.amit.post.service.search.model.SearchCriteria;
-import com.amit.post.service.search.util.RawQueryParser;
+import com.amit.post.service.PostSearchService;
+import com.amit.post.service.util.SearchCriteria;
+import com.amit.post.service.util.RawQueryParser;
 import com.amit.tag.model.Tag;
 import com.amit.tag.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;

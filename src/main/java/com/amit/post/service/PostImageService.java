@@ -1,4 +1,4 @@
-package com.amit.post.service.image;
+package com.amit.post.service;
 
 public interface PostImageService {
 

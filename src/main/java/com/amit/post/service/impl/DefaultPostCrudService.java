@@ -1,9 +1,10 @@
-package com.amit.post.service.crud;
+package com.amit.post.service.impl;
 
 import com.amit.post.model.Post;
 import com.amit.post.model.PostView;
 import com.amit.post.repository.PostCrudRepository;
-import com.amit.post.service.crud.exception.PostNotFoundException;
+import com.amit.post.service.PostCrudService;
+import com.amit.post.service.exception.PostNotFoundException;
 import com.amit.tag.model.Tag;
 import com.amit.tag.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;

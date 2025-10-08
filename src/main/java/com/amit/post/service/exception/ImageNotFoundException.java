@@ -1,4 +1,4 @@
-package com.amit.post.service.image.exception;
+package com.amit.post.service.exception;
 
 public final class ImageNotFoundException extends RuntimeException {
 

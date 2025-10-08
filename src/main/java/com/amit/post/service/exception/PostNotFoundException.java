@@ -1,4 +1,4 @@
-package com.amit.post.service.crud.exception;
+package com.amit.post.service.exception;
 
 public final class PostNotFoundException extends RuntimeException {
 

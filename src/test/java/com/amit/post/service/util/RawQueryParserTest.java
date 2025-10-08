@@ -1,6 +1,5 @@
-package com.amit.post.service.search.util;
+package com.amit.post.service.util;
 
-import com.amit.post.service.search.model.SearchCriteria;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
