@@ -13,6 +13,6 @@ public interface PostCrudService {
 
     PostView update(Post post, Collection<String> tagNames);
 
-    boolean deleteById(long postId);
+    void deleteById(long postId);
 
 }

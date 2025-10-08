@@ -1,9 +1,11 @@
 package com.amit.post.service.impl;
 
+import com.amit.comment.service.exception.CommentNotFoundException;
 import com.amit.post.model.Post;
 import com.amit.post.model.PostView;
 import com.amit.post.repository.PostCrudRepository;
 import com.amit.post.service.PostCrudService;
+import com.amit.post.service.exception.InvalidPostException;
 import com.amit.post.service.exception.PostNotFoundException;
 import com.amit.tag.model.Tag;
 import com.amit.tag.service.TagService;
@@ -31,7 +33,7 @@ public final class DefaultPostCrudService implements PostCrudService {
     @Transactional(readOnly = true)
     public PostView getById(long postId) {
         Post post = this.postCrudRepository.findById(postId)
-                .orElseThrow(() -> new PostNotFoundException(String.format("Post with ID %d not found.", postId)));
+                .orElseThrow(() -> new PostNotFoundException("Post with ID %d not found.".formatted(postId)));
         Set<Tag> tags = this.tagService.getTagsByPostId(postId);
         return new PostView(post, tags);
     }
@@ -39,6 +41,9 @@ public final class DefaultPostCrudService implements PostCrudService {
     @Override
     @Transactional
     public PostView create(Post post, Collection<String> tagNames) {
+        if (post == null) {
+            throw new InvalidPostException("Post must not be null.");
+        }
         Post createdPost = this.postCrudRepository.create(post);
         if (tagNames != null) {
             this.tagService.replacePostTags(createdPost.getId(), tagNames);
@@ -50,11 +55,14 @@ public final class DefaultPostCrudService implements PostCrudService {
     @Override
     @Transactional
     public PostView update(Post post, Collection<String> tagNames) {
+        if (post == null) {
+            throw new InvalidPostException("Post must not be null.");
+        }
         if (post.getId() == null) {
-            throw new IllegalArgumentException("ID must not be null for update.");
+            throw new InvalidPostException("ID must not be null for update.");
         }
         Post updatedPost = this.postCrudRepository.update(post)
-                .orElseThrow(() -> new PostNotFoundException(String.format("Post with ID %d not found.", post.getId())));
+                .orElseThrow(() -> new PostNotFoundException("Post with ID %d not found.".formatted(post.getId())));
         if (tagNames != null) {
             this.tagService.replacePostTags(updatedPost.getId(), tagNames);
         }
@@ -64,8 +72,13 @@ public final class DefaultPostCrudService implements PostCrudService {
 
     @Override
     @Transactional
-    public boolean deleteById(long postId) {
-        return this.postCrudRepository.deleteById(postId);
+    public void deleteById(long postId) {
+        boolean isDeleted = this.postCrudRepository.deleteById(postId);
+        if (!isDeleted) {
+            throw new PostNotFoundException(
+                    "Post with ID %d not found.".formatted(postId)
+            );
+        }
     }
 
 }
