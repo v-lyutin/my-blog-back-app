@@ -3,6 +3,7 @@ package com.amit.tag.repository.jdbc;
 import com.amit.tag.model.Tag;
 import com.amit.tag.repository.TagRepository;
 import com.amit.tag.repository.jdbc.sql.TagQueryHolder;
+import com.amit.tag.repository.jdbc.util.PostTagRow;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.RowMapper;
@@ -18,13 +19,17 @@ public final class JdbcTagRepository implements TagRepository {
 
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    private final RowMapper<Tag> rowMapper;
+    private final RowMapper<Tag> postTagRowMapper;
+
+    private final RowMapper<PostTagRow> postTagRowRowMapper;
 
     @Autowired
     public JdbcTagRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate,
-                             @Qualifier("tagRowMapper") RowMapper<Tag> rowMapper) {
+                             @Qualifier(value = "tagRowMapper") RowMapper<Tag> postTagRowMapper,
+                             @Qualifier(value = "postTagRowRowMapper") RowMapper<PostTagRow> postTagRowRowMapper) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
-        this.rowMapper = rowMapper;
+        this.postTagRowMapper = postTagRowMapper;
+        this.postTagRowRowMapper = postTagRowRowMapper;
     }
 
     @Override
@@ -32,7 +37,7 @@ public final class JdbcTagRepository implements TagRepository {
         List<Tag> tags = this.namedParameterJdbcTemplate.query(
                 TagQueryHolder.FIND_TAGS_BY_POST_ID,
                 new MapSqlParameterSource("postId", postId),
-                this.rowMapper);
+                this.postTagRowMapper);
         return new HashSet<>(tags);
     }
 
@@ -83,12 +88,34 @@ public final class JdbcTagRepository implements TagRepository {
         }
     }
 
+    @Override
+    public Map<Long, Set<Tag>> findTagsByPostIds(Collection<Long> postIds) {
+        if (postIds == null || postIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        List<PostTagRow> postTagRows = this.namedParameterJdbcTemplate.query(
+                TagQueryHolder.FIND_TAGS_BY_POST_IDS,
+                new MapSqlParameterSource("postIds", postIds),
+                this.postTagRowRowMapper
+        );
+
+        Map<Long, Set<Tag>> postsTagsStorage = new HashMap<>(postIds.size());
+        for (Long id : postIds) {
+            postsTagsStorage.put(id, new HashSet<>());
+        }
+        for (PostTagRow postTagRow : postTagRows) {
+            postsTagsStorage.get(postTagRow.getPostId()).add(postTagRow.getTag());
+        }
+        return postsTagsStorage;
+    }
+
     private List<Tag> saveMissingTags(Collection<String> tagNames) {
         MapSqlParameterSource params = new MapSqlParameterSource("names", tagNames.toArray(new String[0]));
         return this.namedParameterJdbcTemplate.query(
                 TagQueryHolder.SAVE_MISSING_TAGS,
                 params,
-                rowMapper
+                this.postTagRowMapper
         );
     }
 
@@ -97,7 +124,7 @@ public final class JdbcTagRepository implements TagRepository {
         return this.namedParameterJdbcTemplate.query(
                 TagQueryHolder.FIND_TAGS_BY_NAMES,
                 params,
-                rowMapper
+                this.postTagRowMapper
         );
     }
 

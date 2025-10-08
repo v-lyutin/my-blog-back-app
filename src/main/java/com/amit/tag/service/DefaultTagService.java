@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -49,21 +48,9 @@ public final class DefaultTagService implements TagService {
         this.tagRepository.attachTagsToPost(postId, tagIds);
     }
 
-    // FIXME
     @Override
     public Map<Long, Set<Tag>> getTagsByPostIds(Collection<Long> postIds) {
-        Map<Long, Set<Tag>> postsTagsStorage = new HashMap<>();
-        if (postIds == null || postIds.isEmpty()) {
-            return postsTagsStorage;
-        }
-        for (Long postId : postIds) {
-            if (postId == null) {
-                continue;
-            }
-            Set<Tag> tags = this.tagRepository.findTagsByPostId(postId);
-            postsTagsStorage.put(postId, tags);
-        }
-        return postsTagsStorage;
+       return this.tagRepository.findTagsByPostIds(postIds);
     }
 
 }

@@ -28,6 +28,13 @@ public final class TagQueryHolder {
             ON CONFLICT (post_id, tag_id) DO NOTHING
             """;
 
+    public static final String FIND_TAGS_BY_POST_IDS = """
+            SELECT pt.post_id, t.id, t.name
+            FROM post_tag pt
+            JOIN tags t ON t.id = pt.tag_id
+            WHERE pt.post_id IN (:postIds)
+            """;
+
     public static final String DELETE_TAGS_BY_POST_ID = "DELETE FROM post_tag WHERE post_id = :postId";
 
     private TagQueryHolder() {
