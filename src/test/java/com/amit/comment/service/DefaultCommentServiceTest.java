@@ -8,7 +8,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -156,12 +155,12 @@ class DefaultCommentServiceTest {
 
         @Bean
         CommentRepository commentRepository() {
-            return Mockito.mock(CommentRepository.class);
+            return mock(CommentRepository.class);
         }
 
         @Bean
-        CommentService commentService(CommentRepository repo) {
-            return new DefaultCommentService(repo);
+        CommentService commentService(CommentRepository commentRepository) {
+            return new DefaultCommentService(commentRepository);
         }
 
     }
