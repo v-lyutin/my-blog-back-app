@@ -15,6 +15,7 @@ val springDataJdbcVersion: String by project
 val jakartaServletApiVersion: String by project
 val junitVersion: String by project
 val postgresqlVersion: String by project
+val mockitoVersion: String by project
 
 dependencies {
     implementation("org.springframework:spring-context:$springCoreVersion")
@@ -27,6 +28,9 @@ dependencies {
 
     testImplementation(platform("org.junit:junit-bom:$junitVersion"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("org.springframework:spring-test:$springCoreVersion")
+    testImplementation("org.mockito:mockito-core:$mockitoVersion")
+    testImplementation("org.mockito:mockito-junit-jupiter:$mockitoVersion")
 }
 
 tasks.war {
