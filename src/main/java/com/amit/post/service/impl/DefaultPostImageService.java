@@ -2,10 +2,12 @@ package com.amit.post.service.impl;
 
 import com.amit.post.repository.PostImageRepository;
 import com.amit.post.service.PostImageService;
-import com.amit.post.service.exception.ImageNotFoundException;
 import com.amit.post.service.exception.ImageUpsertException;
+import com.amit.post.service.util.ImageValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 public final class DefaultPostImageService implements PostImageService {
@@ -18,14 +20,14 @@ public final class DefaultPostImageService implements PostImageService {
 
     @Override
     @Transactional(readOnly = true)
-    public byte[] getByPostId(long postId) {
-        return this.postImageRepository.findByPostId(postId)
-                .orElseThrow(() -> new ImageNotFoundException("Image for post %d not found".formatted(postId)));
+    public Optional<byte[]> getByPostId(long postId) {
+        return this.postImageRepository.findByPostId(postId);
     }
 
     @Override
     @Transactional
     public void upsertByPostId(long postId, byte[] data) {
+        ImageValidator.validateSize(data);
         boolean isSaved = this.postImageRepository.upsertByPostId(postId, data);
         if (!isSaved) {
             throw new ImageUpsertException("Failed to upsert image for post %d".formatted(postId));
