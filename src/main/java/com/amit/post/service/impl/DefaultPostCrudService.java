@@ -1,6 +1,5 @@
 package com.amit.post.service.impl;
 
-import com.amit.comment.service.exception.CommentNotFoundException;
 import com.amit.post.model.Post;
 import com.amit.post.model.PostView;
 import com.amit.post.repository.PostCrudRepository;

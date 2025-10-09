@@ -1,11 +1,11 @@
-package com.amit.post.service.impl;
+package com.amit.post.service;
 
 import com.amit.post.model.Post;
 import com.amit.post.model.PostView;
 import com.amit.post.repository.PostCrudRepository;
-import com.amit.post.service.PostCrudService;
 import com.amit.post.service.exception.InvalidPostException;
 import com.amit.post.service.exception.PostNotFoundException;
+import com.amit.post.service.impl.DefaultPostCrudService;
 import com.amit.tag.model.Tag;
 import com.amit.tag.service.TagService;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import static com.amit.testutil.ModelBuilder.buildPost;
+import static com.amit.testutil.ModelBuilder.buildTag;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -165,7 +167,7 @@ class DefaultPostCrudServiceTest {
     @Test
     @DisplayName(value = "Should throw PostNotFoundException when updating non-existent post")
     void update_throwsPostNotFoundExceptionWhenNotFound() {
-        Post post = buildPost(300L, "t","x",0,0);
+        Post post = buildPost(300L, "t","x", 0, 0);
         when(this.postCrudRepository.update(post)).thenReturn(Optional.empty());
 
         assertThrows(PostNotFoundException.class, () -> this.postCrudService.update(post, List.of("x")));
@@ -196,23 +198,6 @@ class DefaultPostCrudServiceTest {
 
         verify(this.postCrudRepository).deleteById(postId);
         verifyNoMoreInteractions(this.postCrudRepository, this.tagService);
-    }
-
-    private static Post buildPost(Long id, String title, String text, long likes, long comments) {
-        Post post = new Post();
-        post.setId(id);
-        post.setTitle(title);
-        post.setText(text);
-        post.setLikesCount(likes);
-        post.setCommentsCount(comments);
-        return post;
-    }
-
-    private static Tag buildTag(long id, String name) {
-        Tag tag = new Tag();
-        tag.setId(id);
-        tag.setName(name);
-        return tag;
     }
 
     @Configuration

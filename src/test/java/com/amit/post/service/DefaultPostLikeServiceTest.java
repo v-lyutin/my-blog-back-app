@@ -1,8 +1,8 @@
-package com.amit.post.service.impl;
+package com.amit.post.service;
 
 import com.amit.post.repository.PostLikeRepository;
-import com.amit.post.service.PostLikeService;
 import com.amit.post.service.exception.PostNotFoundException;
+import com.amit.post.service.impl.DefaultPostLikeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
