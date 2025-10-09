@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.amit.testutil.ModelBuilder.buildPost;
-import static com.amit.testutil.ModelBuilder.buildTag;
+import static com.amit.testcommon.util.ModelBuilder.buildPost;
+import static com.amit.testcommon.util.ModelBuilder.buildTag;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

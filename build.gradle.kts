@@ -15,6 +15,7 @@ val jakartaServletApiVersion: String by project
 val junitVersion: String by project
 val postgresqlVersion: String by project
 val mockitoVersion: String by project
+val testContainersVersion: String by project
 
 dependencies {
     implementation("org.springframework:spring-context:$springCoreVersion")
@@ -29,6 +30,11 @@ dependencies {
     testImplementation("org.springframework:spring-test:$springCoreVersion")
     testImplementation("org.mockito:mockito-core:$mockitoVersion")
     testImplementation("org.mockito:mockito-junit-jupiter:$mockitoVersion")
+
+    testImplementation("org.testcontainers:junit-jupiter:$testContainersVersion")
+    testImplementation("org.testcontainers:postgresql:$testContainersVersion")
+
+    testImplementation("org.postgresql:postgresql:$postgresqlVersion")
 }
 
 tasks.war {
