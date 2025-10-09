@@ -1,9 +1,9 @@
-package com.amit.post.service.impl;
+package com.amit.post.service;
 
 import com.amit.post.repository.PostImageRepository;
-import com.amit.post.service.PostImageService;
 import com.amit.post.service.exception.ImageUpsertException;
 import com.amit.post.service.exception.InvalidImageException;
+import com.amit.post.service.impl.DefaultPostImageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
