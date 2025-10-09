@@ -1,33 +1,25 @@
 package com.amit.tag.model;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.Table;
-
 import java.util.Objects;
 
-@Table(schema = "my_blog", value = "tags")
 public final class Tag {
 
-    @Id
-    @Column(value = "id")
-    private long id;
+    private Long id;
 
-    @Column(value = "name")
     private String name;
 
     public Tag() {}
 
-    public Tag(long id, String name) {
+    public Tag(Long id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public long getId() {
+    public Long getId() {
         return this.id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -45,7 +37,7 @@ public final class Tag {
             return false;
         }
         Tag otherTag = (Tag) otherObject;
-        return this.id == otherTag.id && Objects.equals(this.name, otherTag.name);
+        return Objects.equals(this.id, otherTag.id) && Objects.equals(this.name, otherTag.name);
     }
 
     @Override

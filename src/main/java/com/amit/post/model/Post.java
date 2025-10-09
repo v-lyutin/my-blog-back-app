@@ -1,28 +1,17 @@
 package com.amit.post.model;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.Table;
-
 import java.util.Objects;
 
-@Table(schema = "my_blog", value = "posts")
 public final class Post {
 
-    @Id
-    @Column(value = "id")
     private Long id;
 
-    @Column(value = "title")
     private String title;
 
-    @Column(value = "text")
     private String text;
 
-    @Column(value = "likes_count")
     private long likesCount;
 
-    @Column(value = "comments_count")
     private long commentsCount;
 
     public Post() {}
