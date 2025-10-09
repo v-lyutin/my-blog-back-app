@@ -1,4 +1,4 @@
-package com.amit.testcommon.configuration;
+package com.amit.common.configuration;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;

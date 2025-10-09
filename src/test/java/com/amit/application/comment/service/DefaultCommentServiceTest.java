@@ -1,7 +1,9 @@
-package com.amit.comment.service;
+package com.amit.application.comment.service;
 
 import com.amit.comment.model.Comment;
 import com.amit.comment.repository.CommentRepository;
+import com.amit.comment.service.CommentService;
+import com.amit.comment.service.DefaultCommentService;
 import com.amit.comment.service.exception.CommentNotFoundException;
 import com.amit.comment.service.exception.InvalidCommentException;
 import org.junit.jupiter.api.BeforeEach;

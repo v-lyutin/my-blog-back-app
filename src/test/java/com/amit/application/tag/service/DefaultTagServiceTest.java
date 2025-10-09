@@ -1,7 +1,9 @@
-package com.amit.tag.service;
+package com.amit.application.tag.service;
 
 import com.amit.tag.model.Tag;
 import com.amit.tag.repository.TagRepository;
+import com.amit.tag.service.DefaultTagService;
+import com.amit.tag.service.TagService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,7 +16,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.*;
 
-import static com.amit.testcommon.util.ModelBuilder.buildTag;
+import static com.amit.common.util.ModelBuilder.buildTag;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

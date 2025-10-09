@@ -1,5 +1,6 @@
-package com.amit.tag.service.util;
+package com.amit.application.tag.service.util;
 
+import com.amit.tag.service.util.TagNameNormalizer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

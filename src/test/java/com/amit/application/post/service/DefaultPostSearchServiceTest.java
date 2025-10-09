@@ -1,9 +1,10 @@
-package com.amit.post.service;
+package com.amit.application.post.service;
 
 import com.amit.common.util.Page;
 import com.amit.post.model.Post;
 import com.amit.post.model.PostView;
 import com.amit.post.repository.PostSearchRepository;
+import com.amit.post.service.PostSearchService;
 import com.amit.post.service.impl.DefaultPostSearchService;
 import com.amit.tag.model.Tag;
 import com.amit.tag.service.TagService;
@@ -20,8 +21,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.amit.testcommon.util.ModelBuilder.buildPost;
-import static com.amit.testcommon.util.ModelBuilder.buildTag;
+import static com.amit.common.util.ModelBuilder.buildPost;
+import static com.amit.common.util.ModelBuilder.buildTag;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

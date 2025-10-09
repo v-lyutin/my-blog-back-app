@@ -1,4 +1,4 @@
-package com.amit.testcommon.util;
+package com.amit.common.util;
 
 import com.amit.post.model.Post;
 import com.amit.tag.model.Tag;

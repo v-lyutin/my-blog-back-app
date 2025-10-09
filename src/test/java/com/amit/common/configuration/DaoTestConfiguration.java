@@ -1,4 +1,4 @@
-package com.amit.testcommon.configuration;
+package com.amit.common.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

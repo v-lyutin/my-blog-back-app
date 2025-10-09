@@ -1,8 +1,9 @@
-package com.amit.post.service;
+package com.amit.application.post.service;
 
 import com.amit.post.model.Post;
 import com.amit.post.model.PostView;
 import com.amit.post.repository.PostCrudRepository;
+import com.amit.post.service.PostCrudService;
 import com.amit.post.service.exception.InvalidPostException;
 import com.amit.post.service.exception.PostNotFoundException;
 import com.amit.post.service.impl.DefaultPostCrudService;
@@ -22,8 +23,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.amit.testcommon.util.ModelBuilder.buildPost;
-import static com.amit.testcommon.util.ModelBuilder.buildTag;
+import static com.amit.common.util.ModelBuilder.buildPost;
+import static com.amit.common.util.ModelBuilder.buildTag;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

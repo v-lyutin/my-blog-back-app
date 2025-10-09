@@ -1,5 +1,7 @@
-package com.amit.post.service.util;
+package com.amit.application.post.service.util;
 
+import com.amit.post.service.util.RawQueryParser;
+import com.amit.post.service.util.SearchCriteria;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

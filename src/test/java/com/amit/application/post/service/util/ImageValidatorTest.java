@@ -1,6 +1,7 @@
-package com.amit.post.service.util;
+package com.amit.application.post.service.util;
 
 import com.amit.post.service.exception.InvalidImageException;
+import com.amit.post.service.util.ImageValidator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

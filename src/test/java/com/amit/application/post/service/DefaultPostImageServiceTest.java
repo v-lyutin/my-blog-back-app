@@ -1,6 +1,7 @@
-package com.amit.post.service;
+package com.amit.application.post.service;
 
 import com.amit.post.repository.PostImageRepository;
+import com.amit.post.service.PostImageService;
 import com.amit.post.service.exception.ImageUpsertException;
 import com.amit.post.service.exception.InvalidImageException;
 import com.amit.post.service.impl.DefaultPostImageService;
