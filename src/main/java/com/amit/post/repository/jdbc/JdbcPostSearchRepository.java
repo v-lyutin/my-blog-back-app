@@ -10,19 +10,20 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import java.sql.Types;
 import java.util.List;
 import java.util.Set;
 
 @Component
-public final class JdbcSearchRepository implements PostSearchRepository {
+public final class JdbcPostSearchRepository implements PostSearchRepository {
 
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     private final RowMapper<Post> postRowMapper;
 
     @Autowired
-    public JdbcSearchRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate,
-                                @Qualifier("postRowMapper") RowMapper<Post> postRowMapper) {
+    public JdbcPostSearchRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate,
+                                    @Qualifier("postRowMapper") RowMapper<Post> postRowMapper) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
         this.postRowMapper = postRowMapper;
     }
@@ -46,16 +47,11 @@ public final class JdbcSearchRepository implements PostSearchRepository {
         String query = (titleQuery == null || titleQuery.isBlank())
                 ? null
                 : "%" + titleQuery + "%";
-        Set<String> tags = (tagNames == null) ? Set.of() : tagNames;
-        MapSqlParameterSource params = new MapSqlParameterSource()
-                .addValue("query", query)
-                .addValue("tagCount", tags.size());
-        if (tags.isEmpty()) {
-            params.addValue("tagNames", new String[0]);
-        } else {
-            params.addValue("tagNames", tags);
-        }
-        return params;
+        String[] tags = (tagNames == null) ? new String[0] : tagNames.toArray(String[]::new);
+        return new MapSqlParameterSource()
+                .addValue("query", query, Types.VARCHAR)
+                .addValue("tagCount", tags.length)
+                .addValue("tagNames", tags);
     }
 
 }

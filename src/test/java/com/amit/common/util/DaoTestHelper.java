@@ -28,4 +28,37 @@ public class DaoTestHelper {
                 });
     }
 
+    public long insertTag(String name) {
+        String query = """
+                INSERT INTO my_blog.tags (name)
+                VALUES (:name)
+                RETURNING id
+                """;
+
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("name", name);
+
+        Long tagId = this.namedParameterJdbcTemplate.queryForObject(query, params, Long.class);
+        if (tagId == null) {
+            throw new IllegalStateException("Failed to insert tag");
+        }
+        return tagId;
+    }
+
+    public void linkTag(long postId, long tagId) {
+        String query = """
+                INSERT INTO my_blog.post_tag (post_id, tag_id)
+                VALUES (:postId, :tagId)
+                """;
+
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("postId", postId)
+                .addValue("tagId", tagId);
+
+        int isUpdated = this.namedParameterJdbcTemplate.update(query, params);
+        if (isUpdated == 0) {
+            throw new IllegalStateException("Failed to link post %d with tag %d".formatted(postId, tagId));
+        }
+    }
+
 }
