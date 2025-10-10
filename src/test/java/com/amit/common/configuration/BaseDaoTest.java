@@ -20,9 +20,6 @@ import java.sql.Statement;
 @ContextConfiguration(classes = DaoTestConfiguration.class)
 public abstract class BaseDaoTest {
 
-//    @Container
-//    public static final PostgreSQLContainer<?> container = new PostgreSQLContainer<>(DockerImageName.parse("postgres:17.6-alpine3.22"));
-
     @BeforeAll
     static void ensureStarted() {
         DatabaseContainer.getInstance();

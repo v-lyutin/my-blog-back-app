@@ -16,7 +16,8 @@ import javax.sql.DataSource;
 
 @Configuration
 @ComponentScan(basePackages = {
-        "com.amit.post.repository"
+        "com.amit.post.repository",
+        "com.amit.tag.repository"
 })
 public class DaoTestConfiguration {
 
