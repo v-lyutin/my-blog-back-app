@@ -19,9 +19,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.amit.common.util.ModelBuilder.buildPost;
 import static com.amit.common.util.ModelBuilder.buildTag;
@@ -59,7 +59,7 @@ class DefaultPostCrudServiceTest {
         PostView postView = this.postCrudService.getById(postId);
 
         assertSame(post, postView.post());
-        assertEquals(tags, postView.tags());
+        assertEquals(tags.stream().map(Tag::getName).collect(Collectors.toSet()), postView.tags());
 
         verify(this.postCrudRepository).findById(postId);
         verify(this.tagService).getTagsByPostId(postId);
@@ -83,16 +83,16 @@ class DefaultPostCrudServiceTest {
     void create_attachesTagsAndReturnsView() {
         Post postToCreate = buildPost(null, "T", "Body", 0, 0);
         Post createdPost  = buildPost(100L, "T", "Body", 0, 0);
-        List<String> tagNames = List.of("travel", "river");
+        Set<String> tagNames = Set.of("travel", "river");
         Set<Tag> tags = Set.of(buildTag(1,"travel"), buildTag(2,"river"));
 
         when(this.postCrudRepository.create(postToCreate)).thenReturn(createdPost);
         when(this.tagService.getTagsByPostId(createdPost.getId())).thenReturn(tags);
 
-        PostView postView = this.postCrudService.create(postToCreate, tagNames);
+        PostView postView = this.postCrudService.create(new PostView(postToCreate, tagNames));
 
         assertSame(createdPost, postView.post());
-        assertEquals(tags, postView.tags());
+        assertEquals(tags.stream().map(Tag::getName).collect(Collectors.toSet()), postView.tags());
 
         verify(this.postCrudRepository).create(postToCreate);
         verify(this.tagService).replacePostTags(createdPost.getId(), tagNames);
@@ -105,15 +105,14 @@ class DefaultPostCrudServiceTest {
     void create_withoutTags() {
         Post postToCreate = buildPost(null, "T", "Body", 0, 0);
         Post createdPost  = buildPost(101L, "T", "Body", 0, 0);
-        Set<Tag> tags = Set.of();
 
         when(this.postCrudRepository.create(postToCreate)).thenReturn(createdPost);
-        when(this.tagService.getTagsByPostId(createdPost.getId())).thenReturn(tags);
+        when(this.tagService.getTagsByPostId(createdPost.getId())).thenReturn(Set.of());
 
-        PostView postView = this.postCrudService.create(postToCreate, null);
+        PostView postView = this.postCrudService.create(new PostView(postToCreate, null));
 
         assertSame(createdPost, postView.post());
-        assertEquals(tags, postView.tags());
+        assertEquals(Set.of(), postView.tags());
 
         verify(this.postCrudRepository).create(postToCreate);
         verify(this.tagService, never()).replacePostTags(anyLong(), any());
@@ -124,7 +123,7 @@ class DefaultPostCrudServiceTest {
     @Test
     @DisplayName(value = "Should throw InvalidPostException when creating null post")
     void create_throwsInvalidPostException() {
-        assertThrows(InvalidPostException.class, () -> this.postCrudService.create(null, List.of("x")));
+        assertThrows(InvalidPostException.class, () -> this.postCrudService.create(new PostView(null, Set.of("tag"))));
         verifyNoInteractions(this.postCrudRepository, this.tagService);
     }
 
@@ -133,16 +132,16 @@ class DefaultPostCrudServiceTest {
     void update_replacesTagsAndReturnsView() {
         Post postToUpdate = buildPost(200L, "New", "Txt", 5, 6);
         Post updatedPost  = buildPost(200L, "New", "Txt", 5, 6);
-        List<String> tagNames = List.of("a","b");
+        Set<String> tagNames = Set.of("a","b");
         Set<Tag> tags = Set.of(buildTag(7,"a"), buildTag(8,"b"));
 
         when(this.postCrudRepository.update(postToUpdate)).thenReturn(Optional.of(updatedPost));
         when(this.tagService.getTagsByPostId(updatedPost.getId())).thenReturn(tags);
 
-        PostView postView = this.postCrudService.update(postToUpdate, tagNames);
+        PostView postView = this.postCrudService.update(new PostView(postToUpdate, tagNames));
 
         assertSame(updatedPost, postView.post());
-        assertEquals(tags, postView.tags());
+        assertEquals(tags.stream().map(Tag::getName).collect(Collectors.toSet()), postView.tags());
 
         verify(this.postCrudRepository).update(postToUpdate);
         verify(this.tagService).replacePostTags(updatedPost.getId(), tagNames);
@@ -153,7 +152,7 @@ class DefaultPostCrudServiceTest {
     @Test
     @DisplayName(value = "Should throw InvalidPostException when updating null post")
     void update_throwsInvalidPostExceptionOnNull() {
-        assertThrows(InvalidPostException.class, () -> this.postCrudService.update(null, List.of("x")));
+        assertThrows(InvalidPostException.class, () -> this.postCrudService.update(new PostView(null, Set.of("tag"))));
         verifyNoInteractions(this.postCrudRepository, this.tagService);
     }
 
@@ -161,7 +160,7 @@ class DefaultPostCrudServiceTest {
     @DisplayName(value = "Should throw InvalidPostException when updating post without id")
     void update_throwsInvalidPostExceptionOnMissingId() {
         Post post = buildPost(null, "t","x",0,0);
-        assertThrows(InvalidPostException.class, () -> this.postCrudService.update(post, List.of("x")));
+        assertThrows(InvalidPostException.class, () -> this.postCrudService.update(new PostView(post, Set.of("tag"))));
         verifyNoInteractions(this.postCrudRepository, this.tagService);
     }
 
@@ -171,7 +170,7 @@ class DefaultPostCrudServiceTest {
         Post post = buildPost(300L, "t","x", 0, 0);
         when(this.postCrudRepository.update(post)).thenReturn(Optional.empty());
 
-        assertThrows(PostNotFoundException.class, () -> this.postCrudService.update(post, List.of("x")));
+        assertThrows(PostNotFoundException.class, () -> this.postCrudService.update(new PostView(post, Set.of("tag"))));
 
         verify(this.postCrudRepository).update(post);
         verifyNoMoreInteractions(this.postCrudRepository, this.tagService);

@@ -1,4 +1,4 @@
-package com.amit.post.dto.response;
+package com.amit.post.api.dto.response;
 
 import java.util.List;
 

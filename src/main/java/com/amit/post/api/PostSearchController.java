@@ -1,6 +1,6 @@
 package com.amit.post.api;
 
-import com.amit.post.dto.response.PostSearchResponse;
+import com.amit.post.api.dto.response.PostSearchResponse;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,4 +1,4 @@
-package com.amit.post.dto.request;
+package com.amit.post.api.dto.request;
 
 import java.util.Set;
 

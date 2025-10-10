@@ -1,8 +1,8 @@
-package com.amit.post.dto.response;
+package com.amit.post.api.dto.response;
 
 import java.util.Set;
 
-public record PostResponse(
+public record PostPreviewDto(
         long id,
         String title,
         String text,

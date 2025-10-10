@@ -9,6 +9,7 @@ import com.amit.post.service.util.SearchCriteria;
 import com.amit.post.service.util.RawQueryParser;
 import com.amit.tag.model.Tag;
 import com.amit.tag.service.TagService;
+import com.amit.tag.service.util.TagNameExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,7 +57,11 @@ public final class DefaultPostSearchService implements PostSearchService {
                 ? Collections.emptyMap()
                 : this.tagService.getTagsByPostIds(postIds);
         return posts.stream()
-                .map(post -> new PostView(post, tagsByPostId.getOrDefault(post.getId(), Collections.emptySet())))
+                .map(post -> {
+                    Set<Tag> tags = tagsByPostId.get(post.getId());
+                    Set<String> tagNames = TagNameExtractor.extractTagNames(tags);
+                    return new PostView(post, tagNames);
+                })
                 .toList();
     }
 

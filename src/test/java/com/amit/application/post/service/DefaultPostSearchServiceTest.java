@@ -19,7 +19,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.amit.common.util.ModelBuilder.buildPost;
 import static com.amit.common.util.ModelBuilder.buildTag;
@@ -82,7 +81,7 @@ class DefaultPostSearchServiceTest {
         assertEquals(1, result.items().size());
         PostView postView = result.items().getFirst();
         assertEquals(1L, postView.post().getId());
-        assertEquals(Set.of("a", "b"), postView.tags().stream().map(Tag::getName).collect(Collectors.toSet()));
+        assertEquals(Set.of("a", "b"), postView.tags());
         assertEquals(1, result.lastPage());
         assertFalse(result.hasPrev());
         assertFalse(result.hasNext());
@@ -110,11 +109,11 @@ class DefaultPostSearchServiceTest {
         assertEquals(2, page.items().size());
         assertEquals(
                 Set.of("travel"),
-                page.items().get(0).tags().stream().map(Tag::getName).collect(Collectors.toSet())
+                page.items().get(0).tags()
         );
         assertEquals(
                 Set.of("river", "nature"),
-                page.items().get(1).tags().stream().map(Tag::getName).collect(Collectors.toSet())
+                page.items().get(1).tags()
         );
 
         verify(this.postSearchRepository).search(null, Set.of(), 5, 0);
