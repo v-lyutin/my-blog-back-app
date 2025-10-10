@@ -1,4 +1,4 @@
-package com.amit.comment.dto.response;
+package com.amit.comment.api.dto.request;
 
 public record CommentUpdateRequest(
         String text,

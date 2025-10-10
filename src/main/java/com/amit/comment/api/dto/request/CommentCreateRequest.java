@@ -1,4 +1,4 @@
-package com.amit.comment.dto.request;
+package com.amit.comment.api.dto.request;
 
 public record CommentCreateRequest(
         String text,

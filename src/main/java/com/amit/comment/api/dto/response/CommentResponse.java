@@ -1,4 +1,4 @@
-package com.amit.comment.dto.response;
+package com.amit.comment.api.dto.response;
 
 public record CommentResponse(
         long id,
