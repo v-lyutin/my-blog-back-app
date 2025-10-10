@@ -1,7 +1,7 @@
 package com.amit.application.post.service;
 
-import com.amit.post.repository.PostCrudRepository;
 import com.amit.post.repository.PostImageRepository;
+import com.amit.post.service.PostCrudService;
 import com.amit.post.service.PostImageService;
 import com.amit.post.service.exception.ImageUpsertException;
 import com.amit.post.service.exception.InvalidImageException;
@@ -10,12 +10,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,14 +32,14 @@ class DefaultPostImageServiceTest {
     private PostImageRepository postImageRepository;
 
     @Autowired
-    private PostCrudRepository postCrudRepository;
+    private PostCrudService postCrudService;
 
     @Autowired
     private PostImageService postImageService;
 
     @BeforeEach
     void resetMocks() {
-        reset(this.postImageRepository, this.postCrudRepository);
+        reset(this.postImageRepository, this.postCrudService);
     }
 
     @Test
@@ -69,68 +72,84 @@ class DefaultPostImageServiceTest {
 
     @Test
     @DisplayName(value = "Should validate size and upsert successfully")
-    void upsert_ok() {
+    void upsert_ok() throws Exception {
         long postId = 12L;
         byte[] data = new byte[1024];
-        when(postCrudRepository.existsById(postId)).thenReturn(true);
+
+        MultipartFile multipartFile = mock(MultipartFile.class);
+        when(multipartFile.getBytes()).thenReturn(data);
         when(this.postImageRepository.upsertByPostId(postId, data)).thenReturn(true);
 
-        assertDoesNotThrow(() -> this.postImageService.upsertByPostId(postId, data));
+        assertDoesNotThrow(() -> this.postImageService.upsertByPostId(postId, multipartFile));
 
-        verify(postCrudRepository).existsById(postId);
-        verify(this.postImageRepository).upsertByPostId(postId, data);
+        InOrder inOrder = inOrder(this.postCrudService, multipartFile, this.postImageRepository);
+        inOrder.verify(this.postCrudService).ensurePostExists(postId);
+        inOrder.verify(multipartFile).getBytes();
+        inOrder.verify(this.postImageRepository).upsertByPostId(postId, data);
         verifyNoMoreInteractions(this.postImageRepository);
     }
 
     @Test
     @DisplayName(value = "Should throw ImageUpsertException when repository returns false")
-    void upsertByPostId_repositoryFailure() {
+    void upsert_repositoryFailure() throws Exception {
         long postId = 13L;
         byte[] data = new byte[1024];
-        when(postCrudRepository.existsById(postId)).thenReturn(true);
+
+        MultipartFile multipartFile = mock(MultipartFile.class);
+        when(multipartFile.getBytes()).thenReturn(data);
         when(this.postImageRepository.upsertByPostId(postId, data)).thenReturn(false);
 
-        assertThrows(ImageUpsertException.class, () -> this.postImageService.upsertByPostId(postId, data));
+        assertThrows(ImageUpsertException.class, () -> this.postImageService.upsertByPostId(postId, multipartFile));
 
-        verify(postCrudRepository).existsById(postId);
-        verify(this.postImageRepository).upsertByPostId(postId, data);
+        InOrder inOrder = inOrder(this.postCrudService, multipartFile, this.postImageRepository);
+        inOrder.verify(this.postCrudService).ensurePostExists(postId);
+        inOrder.verify(multipartFile).getBytes();
+        inOrder.verify(this.postImageRepository).upsertByPostId(postId, data);
         verifyNoMoreInteractions(this.postImageRepository);
     }
 
     @Test
     @DisplayName(value = "Should throw when data is null or empty (validator)")
-    void upsertByPostId_validatorRejects_nullOrEmpty() {
+    void upsert_validatorRejects_nullOrEmpty() throws Exception {
         long postId = 14L;
 
-        assertThrows(InvalidImageException.class, () -> this.postImageService.upsertByPostId(postId, null));
-        assertThrows(InvalidImageException.class, () -> this.postImageService.upsertByPostId(postId, new byte[0]));
+        MultipartFile emptyMultipartFile = mock(MultipartFile.class);
+        when(emptyMultipartFile.getBytes()).thenReturn(new byte[0]);
 
+        assertThrows(InvalidImageException.class, () -> this.postImageService.upsertByPostId(postId, emptyMultipartFile));
+
+        verify(this.postCrudService).ensurePostExists(postId);
+        verify(emptyMultipartFile).getBytes();
         verifyNoInteractions(this.postImageRepository);
     }
 
     @Test
-    @DisplayName(value = "Should throw ImageUpsertException if post does not exist")
-    void upsertByPostId_nonExistingPost_throwsImageUpsertException() {
-        long postId = 999L;
-        when(this.postCrudRepository.existsById(postId)).thenReturn(false);
+    @DisplayName(value = "Should throw when data exceeds max size (validator)")
+    void upsert_validatorRejects_tooLargeImage() throws Exception {
+        long postId = 15L;
+        byte[] tooLargeSize = new byte[(int) (5L * 1024 * 1024) + 1];
 
-        assertThrows(
-                ImageUpsertException.class,
-                () -> this.postImageService.upsertByPostId(postId, new byte[]{1, 2, 3})
-        );
+        MultipartFile multipartFile = mock(MultipartFile.class);
+        when(multipartFile.getBytes()).thenReturn(tooLargeSize);
 
-        verify(this.postCrudRepository).existsById(postId);
-        verifyNoInteractions(postImageRepository);
+        assertThrows(InvalidImageException.class, () -> this.postImageService.upsertByPostId(postId, multipartFile));
+
+        verify(this.postCrudService).ensurePostExists(postId);
+        verify(multipartFile).getBytes();
+        verifyNoInteractions(this.postImageRepository);
     }
 
     @Test
-    @DisplayName(value = "Should throw when data exceeds max size (validator)")
-    void upsertByPostId_validatorRejects_tooLargeImage() {
-        long id = 15L;
-        byte[] largeSize = new byte[(int) (5L * 1024 * 1024) + 1];
+    @DisplayName(value = "Should wrap IOException from MultipartFile into ImageUpsertException")
+    void upsert_wrapsIoException() throws Exception {
+        long postId = 16L;
+        MultipartFile multipartFile = mock(MultipartFile.class);
+        when(multipartFile.getBytes()).thenThrow(new IOException("Boom"));
 
-        assertThrows(InvalidImageException.class, () -> this.postImageService.upsertByPostId(id, largeSize));
+        assertThrows(ImageUpsertException.class, () -> this.postImageService.upsertByPostId(postId, multipartFile));
 
+        verify(this.postCrudService).ensurePostExists(postId);
+        verify(multipartFile).getBytes();
         verifyNoInteractions(this.postImageRepository);
     }
 
@@ -143,13 +162,13 @@ class DefaultPostImageServiceTest {
         }
 
         @Bean
-        PostCrudRepository postCrudRepository() {
-            return mock(PostCrudRepository.class);
+        PostCrudService postCrudService() {
+            return mock(PostCrudService.class);
         }
 
         @Bean
-        PostImageService postImageService(PostImageRepository postImageRepository, PostCrudRepository postCrudRepository) {
-            return new DefaultPostImageService(postImageRepository, postCrudRepository);
+        PostImageService postImageService(PostImageRepository postImageRepository, PostCrudService postCrudService) {
+            return new DefaultPostImageService(postImageRepository, postCrudService);
         }
 
     }

@@ -1,13 +1,15 @@
 package com.amit.post.service.impl;
 
-import com.amit.post.repository.PostCrudRepository;
 import com.amit.post.repository.PostImageRepository;
+import com.amit.post.service.PostCrudService;
 import com.amit.post.service.PostImageService;
 import com.amit.post.service.exception.ImageUpsertException;
 import com.amit.post.service.util.ImageValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @Service
@@ -15,11 +17,11 @@ public final class DefaultPostImageService implements PostImageService {
 
     private final PostImageRepository postImageRepository;
 
-    private final PostCrudRepository postCrudRepository;
+    private final PostCrudService postCrudService;
 
-    public DefaultPostImageService(PostImageRepository postImageRepository, PostCrudRepository postCrudRepository) {
+    public DefaultPostImageService(PostImageRepository postImageRepository, PostCrudService postCrudService) {
         this.postImageRepository = postImageRepository;
-        this.postCrudRepository = postCrudRepository;
+        this.postCrudService = postCrudService;
     }
 
     @Override
@@ -30,16 +32,19 @@ public final class DefaultPostImageService implements PostImageService {
 
     @Override
     @Transactional
-    public void upsertByPostId(long postId, byte[] data) {
-        ImageValidator.validateSize(data);
+    public void upsertByPostId(long postId, MultipartFile multipartFile) {
+        try {
+            this.postCrudService.ensurePostExists(postId);
 
-        if (!this.postCrudRepository.existsById(postId)) {
-            throw new ImageUpsertException("Cannot upsert image: post %d does not exist.".formatted(postId));
-        }
+            byte[] data = multipartFile.getBytes();
+            ImageValidator.validateSize(data);
 
-        boolean isSaved = this.postImageRepository.upsertByPostId(postId, data);
-        if (!isSaved) {
-            throw new ImageUpsertException("Failed to upsert image for post %d.".formatted(postId));
+            boolean isSaved = this.postImageRepository.upsertByPostId(postId, data);
+            if (!isSaved) {
+                throw new ImageUpsertException("Failed to upsert image for post %d.".formatted(postId));
+            }
+        } catch (IOException exception) {
+            throw new ImageUpsertException("Failed to read uploaded image.");
         }
     }
 
