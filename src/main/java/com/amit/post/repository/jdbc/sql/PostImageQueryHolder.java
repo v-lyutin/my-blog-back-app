@@ -4,12 +4,12 @@ public final class PostImageQueryHolder {
 
     public static final String FIND_POST_BY_POST_ID = """
         SELECT data
-        FROM post_images
+        FROM my_blog.post_images
         WHERE post_id = :postId
         """;
 
     public static final String UPSERT_IMAGE_BY_POST_ID = """
-        INSERT INTO post_images (post_id, data)
+        INSERT INTO my_blog.post_images (post_id, data)
         VALUES (:postId, :data)
         ON CONFLICT (post_id) DO UPDATE
         SET data = EXCLUDED.data

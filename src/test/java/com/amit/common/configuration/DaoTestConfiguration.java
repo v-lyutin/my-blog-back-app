@@ -1,6 +1,9 @@
 package com.amit.common.configuration;
 
+import com.amit.common.util.DaoTestHelper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -8,30 +11,37 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import javax.sql.DataSource;
 
 @Configuration
-@Testcontainers
+@ComponentScan(basePackages = {
+        "com.amit.post.repository"
+})
 public class DaoTestConfiguration {
 
-    public static final PostgreSQLContainer<?> container = new PostgreSQLContainer<>("17.6-alpine3.22");
-
     @Bean
-    public DataSource dataSource() {
-        DriverManagerDataSource driverManagerDataSource = new DriverManagerDataSource();
-        driverManagerDataSource.setDriverClassName("org.postgresql.Driver");
-        driverManagerDataSource.setUrl(container.getJdbcUrl());
-        driverManagerDataSource.setUsername(container.getUsername());
-        driverManagerDataSource.setPassword(container.getPassword());
-        return driverManagerDataSource;
+    public DataSource dataSource(
+            @Value("${test.jdbc.url}") String url,
+            @Value("${test.jdbc.username}") String username,
+            @Value("${test.jdbc.password}") String password
+    ) {
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName("org.postgresql.Driver");
+        dataSource.setUrl(url);
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
+        return dataSource;
     }
 
     @Bean
     public NamedParameterJdbcTemplate namedParameterJdbcTemplate(DataSource dataSource) {
         return new NamedParameterJdbcTemplate(dataSource);
+    }
+
+    @Bean
+    public DaoTestHelper daoTestHelper(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+        return new DaoTestHelper(namedParameterJdbcTemplate);
     }
 
     @EventListener

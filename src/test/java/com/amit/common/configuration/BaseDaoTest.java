@@ -4,15 +4,32 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.Statement;
 
+@Testcontainers
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = DaoTestConfiguration.class)
 public abstract class BaseDaoTest {
+
+    @Container
+    public static final PostgreSQLContainer<?> container = new PostgreSQLContainer<>(DockerImageName.parse("postgres:17.6-alpine3.22"));
+
+    @DynamicPropertySource
+    static void addDatabaseProperties(DynamicPropertyRegistry dynamicPropertyRegistry) {
+        dynamicPropertyRegistry.add("test.jdbc.url", container::getJdbcUrl);
+        dynamicPropertyRegistry.add("test.jdbc.username", container::getUsername);
+        dynamicPropertyRegistry.add("test.jdbc.password", container::getPassword);
+    }
 
     @Autowired
     protected DataSource dataSource;

@@ -15,8 +15,4 @@ public final class PostImageRowMapper implements RowMapper<byte[]> {
         return resultSet.getBytes("data");
     }
 
-    private PostImageRowMapper() {
-        throw new UnsupportedOperationException();
-    }
-
 }
