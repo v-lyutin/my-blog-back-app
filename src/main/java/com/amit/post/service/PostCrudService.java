@@ -9,7 +9,7 @@ public interface PostCrudService {
 
     PostView create(PostView postView);
 
-    PostView update(PostView postView);
+    PostView update(long postId, PostView postView);
 
     void deleteById(long postId);
 

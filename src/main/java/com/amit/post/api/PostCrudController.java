@@ -38,11 +38,10 @@ public final class PostCrudController {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.postMapper.toPostResponse(postView));
     }
 
-    // FIXME
     @PutMapping(value = "/{postId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PostResponse> updatePostById(@PathVariable(value = "postId") long postId,
                                                        @RequestBody PostUpdateRequest postUpdateRequest) {
-        PostView postView = this.postCrudService.update(this.postMapper.toPostView(postUpdateRequest));
+        PostView postView = this.postCrudService.update(postId, this.postMapper.toPostView(postUpdateRequest));
         return ResponseEntity.ok(this.postMapper.toPostResponse(postView));
     }
 

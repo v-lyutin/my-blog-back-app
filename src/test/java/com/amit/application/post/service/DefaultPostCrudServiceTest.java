@@ -138,7 +138,7 @@ class DefaultPostCrudServiceTest {
         when(this.postCrudRepository.update(postToUpdate)).thenReturn(Optional.of(updatedPost));
         when(this.tagService.getTagsByPostId(updatedPost.getId())).thenReturn(tags);
 
-        PostView postView = this.postCrudService.update(new PostView(postToUpdate, tagNames));
+        PostView postView = this.postCrudService.update(200L, new PostView(postToUpdate, tagNames));
 
         assertSame(updatedPost, postView.post());
         assertEquals(tags.stream().map(Tag::getName).collect(Collectors.toSet()), postView.tags());
@@ -152,7 +152,7 @@ class DefaultPostCrudServiceTest {
     @Test
     @DisplayName(value = "Should throw InvalidPostException when updating null post")
     void update_throwsInvalidPostExceptionOnNull() {
-        assertThrows(InvalidPostException.class, () -> this.postCrudService.update(new PostView(null, Set.of("tag"))));
+        assertThrows(InvalidPostException.class, () -> this.postCrudService.update(666L, new PostView(null, Set.of("tag"))));
         verifyNoInteractions(this.postCrudRepository, this.tagService);
     }
 
@@ -160,7 +160,19 @@ class DefaultPostCrudServiceTest {
     @DisplayName(value = "Should throw InvalidPostException when updating post without id")
     void update_throwsInvalidPostExceptionOnMissingId() {
         Post post = buildPost(null, "t","x",0,0);
-        assertThrows(InvalidPostException.class, () -> this.postCrudService.update(new PostView(post, Set.of("tag"))));
+        assertThrows(InvalidPostException.class, () -> this.postCrudService.update(666L, new PostView(post, Set.of("tag"))));
+        verifyNoInteractions(this.postCrudRepository, this.tagService);
+    }
+
+    @Test
+    @DisplayName(value = "Should throw IllegalArgumentException when postId path variable and postView.post().id differ")
+    void update_throwsIllegalArgumentExceptionWhenPostIdMismatch() {
+        long pathPostId = 10L;
+        Post post = buildPost(666L, "t","x",0,0);
+        PostView postView = new PostView(post, Set.of("tag1", "tag2"));
+
+        assertThrows(IllegalArgumentException.class, () -> this.postCrudService.update(pathPostId, postView));
+
         verifyNoInteractions(this.postCrudRepository, this.tagService);
     }
 
@@ -170,7 +182,7 @@ class DefaultPostCrudServiceTest {
         Post post = buildPost(300L, "t","x", 0, 0);
         when(this.postCrudRepository.update(post)).thenReturn(Optional.empty());
 
-        assertThrows(PostNotFoundException.class, () -> this.postCrudService.update(new PostView(post, Set.of("tag"))));
+        assertThrows(PostNotFoundException.class, () -> this.postCrudService.update(post.getId(), new PostView(post, Set.of("tag"))));
 
         verify(this.postCrudRepository).update(post);
         verifyNoMoreInteractions(this.postCrudRepository, this.tagService);
