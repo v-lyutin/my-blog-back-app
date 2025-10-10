@@ -1,11 +1,17 @@
 package com.amit.post.api.mapper;
 
+import com.amit.common.util.Page;
 import com.amit.post.api.dto.request.PostCreateRequest;
 import com.amit.post.api.dto.request.PostUpdateRequest;
+import com.amit.post.api.dto.response.PostPreviewDto;
 import com.amit.post.api.dto.response.PostResponse;
+import com.amit.post.api.dto.response.PostSearchResponse;
+import com.amit.post.api.util.TextTruncator;
 import com.amit.post.model.Post;
 import com.amit.post.model.PostView;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public final class DefaultPostMapper implements PostMapper {
@@ -32,6 +38,28 @@ public final class DefaultPostMapper implements PostMapper {
                 postView.post().getId(),
                 postView.post().getTitle(),
                 postView.post().getText(),
+                postView.tags(),
+                postView.post().getLikesCount(),
+                postView.post().getCommentsCount()
+        );
+    }
+
+    @Override
+    public PostSearchResponse toPostSearchResponse(Page<PostView> posts) {
+        List<PostPreviewDto> postPreviewDtos = posts.items().stream().map(this::toPostPreviewDto).toList();
+        return new PostSearchResponse(
+                postPreviewDtos,
+                posts.hasPrev(),
+                posts.hasNext(),
+                posts.lastPage()
+        );
+    }
+
+    private PostPreviewDto toPostPreviewDto(PostView postView) {
+        return new PostPreviewDto(
+                postView.post().getId(),
+                postView.post().getTitle(),
+                TextTruncator.truncate(postView.post().getText()),
                 postView.tags(),
                 postView.post().getLikesCount(),
                 postView.post().getCommentsCount()

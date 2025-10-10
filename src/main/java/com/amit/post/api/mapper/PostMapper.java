@@ -1,8 +1,10 @@
 package com.amit.post.api.mapper;
 
+import com.amit.common.util.Page;
 import com.amit.post.api.dto.request.PostCreateRequest;
 import com.amit.post.api.dto.request.PostUpdateRequest;
 import com.amit.post.api.dto.response.PostResponse;
+import com.amit.post.api.dto.response.PostSearchResponse;
 import com.amit.post.model.PostView;
 
 public interface PostMapper {
@@ -12,5 +14,7 @@ public interface PostMapper {
     PostView toPostView(PostUpdateRequest postUpdateRequest);
 
     PostResponse toPostResponse(PostView postView);
+
+    PostSearchResponse toPostSearchResponse(Page<PostView> posts);
 
 }
