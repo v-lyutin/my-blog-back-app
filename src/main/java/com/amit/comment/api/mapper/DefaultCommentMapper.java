@@ -16,7 +16,7 @@ public final class DefaultCommentMapper implements CommentMapper {
 
     @Override
     public Comment toComment(CommentUpdateRequest commentUpdateRequest) {
-        return new Comment(commentUpdateRequest.text(), commentUpdateRequest.postId());
+        return new Comment(commentUpdateRequest.id(), commentUpdateRequest.text(), commentUpdateRequest.postId());
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.amit.comment.service.CommentService;
 import com.amit.comment.service.DefaultCommentService;
 import com.amit.comment.service.exception.CommentNotFoundException;
 import com.amit.comment.service.exception.InvalidCommentException;
+import com.amit.post.service.PostCrudService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,9 +33,12 @@ class DefaultCommentServiceTest {
     @Autowired
     private CommentRepository commentRepository;
 
+    @Autowired
+    private PostCrudService postCrudService;
+
     @BeforeEach
     void resetMocks() {
-        reset(this.commentRepository);
+        reset(this.commentRepository, this.postCrudService);
     }
 
     @Test
@@ -75,53 +79,107 @@ class DefaultCommentServiceTest {
     }
 
     @Test
-    @DisplayName(value = "Should throw exception when comment is null")
-    void create_throwsInvalidCommentException() {
-        assertThrows(InvalidCommentException.class, () -> this.commentService.create(null));
+    @DisplayName(value = "Should throw InvalidCommentException when comment is null")
+    void create_nullComment_throwsInvalidCommentException() {
+        long postId = 7L;
+
+        assertThrows(InvalidCommentException.class, () -> this.commentService.create(postId, null));
+
         verifyNoInteractions(this.commentRepository);
+        verifyNoInteractions(this.postCrudService);
     }
 
     @Test
-    @DisplayName(value = "Should create a new comment and increment post counter")
-    void create_savesComment() {
-        Comment commentToCreate = buildComment(7L, 0L, "new");
-        Comment savedComment = buildComment(7L, 42L, "new");
-        when(this.commentRepository.create(commentToCreate)).thenReturn(savedComment);
+    @DisplayName(value = "Should throw IllegalArgumentException when path postId differs from payload postId")
+    void create_postIdMismatch_throwsIllegalArgumentException() {
+        long pathPostId = 7L;
+        Comment comment = buildComment(8L, 666L, "Text");
 
-        Comment out = this.commentService.create(commentToCreate);
+        assertThrows(IllegalArgumentException.class, () -> this.commentService.create(pathPostId, comment));
+
+        verifyNoInteractions(this.commentRepository);
+        verifyNoInteractions(this.postCrudService);
+    }
+
+    @Test
+    @DisplayName(value = "Should ensure post exists and create a new comment")
+    void create_ok_savesComment() {
+        long postId = 7L;
+        Comment commentToCreate = buildComment(postId, null, "new");
+        Comment savedComment = buildComment(postId, 42L, "new");
+
+        when(commentRepository.create(commentToCreate)).thenReturn(savedComment);
+
+        Comment out = this.commentService.create(postId, commentToCreate);
 
         assertSame(savedComment, out);
+        verify(this.postCrudService).ensurePostExists(postId);
         verify(this.commentRepository).create(commentToCreate);
+        verifyNoMoreInteractions(this.postCrudService, this.commentRepository);
     }
 
     @Test
-    @DisplayName(value = "Should throw exception when comment is null")
-    void update_throwsInvalidCommentException() {
-        assertThrows(InvalidCommentException.class, () -> this.commentService.update(null));
+    @DisplayName(value = "Should throw InvalidCommentException when comment is null")
+    void update_nullComment_throwsInvalidCommentException() {
+        assertThrows(InvalidCommentException.class, () -> this.commentService.update(7L, 3L, null));
+
         verifyNoInteractions(this.commentRepository);
     }
 
     @Test
-    @DisplayName(value = "Should update existing comment")
-    void update_updatesComment() {
-        Comment existingComment = buildComment(8L, 3L, "old");
-        Comment updatedComment = buildComment(8L, 3L, "new");
+    @DisplayName(value = "Should throw IllegalArgumentException when path postId differs from payload postId")
+    void update_postIdMismatch_throwsIllegalArgumentException() {
+        long pathPostId = 7L;
+        long pathCommentId = 3L;
+        Comment comment = buildComment(8L, pathCommentId, "text");
+
+        assertThrows(IllegalArgumentException.class, () -> this.commentService.update(pathPostId, pathCommentId, comment));
+
+        verifyNoInteractions(this.commentRepository);
+    }
+
+    @Test
+    @DisplayName(value = "Should throw IllegalArgumentException when path commentId differs from payload commentId")
+    void update_commentIdMismatch_throwsIAE() {
+        long pathPostId = 7L;
+        long pathCommentId = 11L;
+        Comment comment = buildComment(pathPostId, 12L, "text");
+
+        assertThrows(IllegalArgumentException.class, () -> this.commentService.update(pathPostId, pathCommentId, comment));
+
+        verifyNoInteractions(this.commentRepository);
+    }
+
+    @Test
+    @DisplayName(value = "Should update existing comment and return it")
+    void update_ok_updatesComment() {
+        long postId = 8L;
+        long commentId = 3L;
+        Comment existingComment = buildComment(postId, commentId, "old");
+        Comment updatedComment = buildComment(postId, commentId, "new");
+
         when(this.commentRepository.update(existingComment)).thenReturn(Optional.of(updatedComment));
 
-        Comment out = this.commentService.update(existingComment);
+        Comment out = this.commentService.update(postId, commentId, existingComment);
 
         assertSame(updatedComment, out);
         verify(this.commentRepository).update(existingComment);
+        verifyNoMoreInteractions(this.commentRepository);
     }
 
     @Test
-    @DisplayName(value = "Should throw exception when updating non-existent comment")
-    void update_throwsCommentNotFoundException() {
-        Comment missingComment = buildComment(8L, 404L, "x");
+    @DisplayName(value = "Should throw CommentNotFoundException when repository returns empty on update")
+    void update_notFound_throwsCommentNotFoundException() {
+        long postId = 8L;
+        long commentId = 404L;
+        Comment missingComment = buildComment(postId, commentId, "Comment");
+
         when(this.commentRepository.update(missingComment)).thenReturn(Optional.empty());
 
-        assertThrows(CommentNotFoundException.class, () -> this.commentService.update(missingComment));
+        assertThrows(CommentNotFoundException.class, () -> this.commentService.update(postId, commentId, missingComment));
+
         verify(this.commentRepository).update(missingComment);
+        verifyNoMoreInteractions(this.commentRepository);
     }
 
     @Test
@@ -144,7 +202,7 @@ class DefaultCommentServiceTest {
         verify(this.commentRepository).deleteByPostIdAndId(postId, id);
     }
 
-    private static Comment buildComment(long postId, long id, String text) {
+    private static Comment buildComment(Long postId, Long id, String text) {
         Comment comment = new Comment();
         comment.setPostId(postId);
         comment.setId(id);
@@ -161,8 +219,13 @@ class DefaultCommentServiceTest {
         }
 
         @Bean
-        CommentService commentService(CommentRepository commentRepository) {
-            return new DefaultCommentService(commentRepository);
+        PostCrudService postCrudService() {
+            return mock(PostCrudService.class);
+        }
+
+        @Bean
+        CommentService commentService(CommentRepository commentRepository, PostCrudService postCrudService) {
+            return new DefaultCommentService(commentRepository, postCrudService);
         }
 
     }

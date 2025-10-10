@@ -41,20 +41,25 @@ public final class CommentController {
         return ResponseEntity.ok(this.commentMapper.toCommentResponse(comment));
     }
 
-    // FIXME
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CommentResponse> addCommentForPost(@PathVariable(value = "postId") long postId,
                                                              @RequestBody CommentCreateRequest commentCreateRequest) {
-        Comment comment = this.commentService.create(this.commentMapper.toComment(commentCreateRequest));
+        Comment comment = this.commentService.create(
+                postId,
+                this.commentMapper.toComment(commentCreateRequest)
+        );
         return ResponseEntity.status(HttpStatus.CREATED).body(this.commentMapper.toCommentResponse(comment));
     }
 
-    // FIXME
     @PutMapping(value = "/{commentId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CommentResponse> updateCommentForPostById(@PathVariable(value = "postId") long postId,
                                                                     @PathVariable(value = "commentId") long commentId,
                                                                     @RequestBody CommentUpdateRequest commentUpdateRequest) {
-        Comment comment = this.commentService.update(this.commentMapper.toComment(commentUpdateRequest));
+        Comment comment = this.commentService.update(
+                postId,
+                commentId,
+                this.commentMapper.toComment(commentUpdateRequest)
+        );
         return ResponseEntity.ok(this.commentMapper.toCommentResponse(comment));
     }
 

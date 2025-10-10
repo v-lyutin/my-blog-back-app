@@ -10,9 +10,9 @@ public interface CommentService {
 
     Comment getByPostIdAndId(long postId, long commentId);
 
-    Comment create(Comment comment);
+    Comment create(long postId, Comment comment);
 
-    Comment update(Comment comment);
+    Comment update(long postId, long commentId, Comment comment);
 
     void deleteByPostIdAndId(long postId, long commentId);
 

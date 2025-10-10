@@ -201,6 +201,30 @@ class DefaultPostCrudServiceTest {
         verifyNoMoreInteractions(this.postCrudRepository, this.tagService);
     }
 
+    @Test
+    @DisplayName(value = "Should do nothing when post exists")
+    void ensurePostExists_ok() {
+        long postId = 42L;
+        when(this.postCrudRepository.existsById(postId)).thenReturn(true);
+
+        assertDoesNotThrow(() -> this.postCrudService.ensurePostExists(postId));
+
+        verify(this.postCrudRepository).existsById(postId);
+        verifyNoMoreInteractions(this.postCrudRepository);
+    }
+
+    @Test
+    @DisplayName(value = "Should throw PostNotFoundException when post is missing")
+    void ensurePostExists_missing_throws() {
+        long postId = 404L;
+        when(this.postCrudRepository.existsById(postId)).thenReturn(false);
+
+        assertThrows(PostNotFoundException.class, () -> this.postCrudService.ensurePostExists(postId));
+
+        verify(this.postCrudRepository).existsById(postId);
+        verifyNoMoreInteractions(this.postCrudRepository);
+    }
+
     @Configuration
     static class DefaultPostCrudServiceTestConfiguration {
 

@@ -2,6 +2,7 @@ package com.amit.post.service;
 
 import com.amit.post.model.Post;
 import com.amit.post.model.PostView;
+import com.amit.post.service.exception.PostNotFoundException;
 
 import java.util.Collection;
 
@@ -14,5 +15,7 @@ public interface PostCrudService {
     PostView update(Post post, Collection<String> tagNames);
 
     void deleteById(long postId);
+
+    void ensurePostExists(long postId) throws PostNotFoundException;
 
 }

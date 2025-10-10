@@ -80,4 +80,11 @@ public final class DefaultPostCrudService implements PostCrudService {
         }
     }
 
+    @Override
+    public void ensurePostExists(long postId) throws PostNotFoundException {
+        if (!this.postCrudRepository.existsById(postId)) {
+            throw new PostNotFoundException("Post with ID %d not found.".formatted(postId));
+        }
+    }
+
 }
