@@ -12,11 +12,11 @@ public final class Comment {
 
     public Comment() {}
 
-    public long getId() {
+    public Long getId() {
         return this.id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
