@@ -23,6 +23,8 @@ public final class PostQueryHolder {
 
     public static final String DELETE_POST_BY_ID = "DELETE FROM my_blog.posts WHERE id = :id";
 
+    public static final String EXISTS_POST_BY_ID = "SELECT EXISTS(SELECT 1 FROM my_blog.posts WHERE id = :postId)";
+
     private PostQueryHolder() {
         throw new UnsupportedOperationException();
     }

@@ -14,4 +14,6 @@ public interface PostCrudRepository {
 
     boolean deleteById(long postId);
 
+    boolean existsById(long postId);
+
 }

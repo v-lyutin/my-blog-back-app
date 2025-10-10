@@ -60,4 +60,15 @@ public final class JdbcPostCrudRepository implements PostCrudRepository {
         return this.namedParameterJdbcTemplate.update(PostQueryHolder.DELETE_POST_BY_ID, new MapSqlParameterSource("id", postId)) > 0;
     }
 
+    @Override
+    public boolean existsById(long postId) {
+        MapSqlParameterSource params = new MapSqlParameterSource("postId", postId);
+        Boolean exists = this.namedParameterJdbcTemplate.queryForObject(
+                PostQueryHolder.EXISTS_POST_BY_ID,
+                params,
+                Boolean.class
+        );
+        return Boolean.TRUE.equals(exists);
+    }
+
 }
