@@ -17,6 +17,7 @@ val postgresqlVersion: String by project
 val jacksonVersion: String by project
 val mockitoVersion: String by project
 val testContainersVersion: String by project
+val jsonassertVersion: String by project
 
 dependencies {
     implementation("org.springframework:spring-context:$springCoreVersion")
@@ -38,6 +39,10 @@ dependencies {
 
     testImplementation("org.testcontainers:junit-jupiter:$testContainersVersion")
     testImplementation("org.testcontainers:postgresql:$testContainersVersion")
+
+    testImplementation("jakarta.servlet:jakarta.servlet-api:${jakartaServletApiVersion}")
+
+    testImplementation("org.skyscreamer:jsonassert:$jsonassertVersion")
 
     testImplementation("org.postgresql:postgresql:$postgresqlVersion")
 }

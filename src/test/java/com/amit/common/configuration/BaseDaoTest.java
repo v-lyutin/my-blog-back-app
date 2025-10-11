@@ -15,7 +15,6 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.Statement;
 
-@Testcontainers
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = DaoTestConfiguration.class)
 public abstract class BaseDaoTest {
