@@ -4,11 +4,11 @@ import java.time.LocalDateTime;
 
 public record ErrorDto(
         String message,
-        LocalDateTime timestamp,
+        String timestamp,
         String path) {
 
     public ErrorDto(String message, String path) {
-        this(message, LocalDateTime.now(), path);
+        this(message, LocalDateTime.now().toString(), path);
     }
 
 }

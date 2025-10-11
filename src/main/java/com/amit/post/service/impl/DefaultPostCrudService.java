@@ -61,7 +61,7 @@ public final class DefaultPostCrudService implements PostCrudService {
             throw new InvalidPostException("ID must not be null for update.");
         }
         if (postView.post().getId() != postId) {
-            throw new IllegalArgumentException("IDs for post must not be different");
+            throw new IllegalArgumentException("IDs for post must not be different.");
         }
         Post updatedPost = this.postCrudRepository.update(postView.post())
                 .orElseThrow(() -> new PostNotFoundException("Post with ID %d not found.".formatted(postView.post().getId())));

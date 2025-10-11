@@ -27,7 +27,7 @@ public final class DefaultPostMapper implements PostMapper {
     @Override
     public PostView toPostView(PostUpdateRequest postUpdateRequest) {
         return new PostView(
-                new Post(postUpdateRequest.title(), postUpdateRequest.text()),
+                new Post(postUpdateRequest.id(), postUpdateRequest.title(), postUpdateRequest.text()),
                 postUpdateRequest.tags()
         );
     }

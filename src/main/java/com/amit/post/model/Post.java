@@ -21,6 +21,12 @@ public final class Post {
         this.text = text;
     }
 
+    public Post(Long id, String title, String text) {
+        this.id = id;
+        this.title = title;
+        this.text = text;
+    }
+
     public Long getId() {
         return this.id;
     }
