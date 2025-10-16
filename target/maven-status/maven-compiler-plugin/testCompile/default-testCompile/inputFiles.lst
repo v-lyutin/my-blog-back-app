@@ -1,0 +1,5 @@
+/Users/vladislav/Development/yandex/blog/my-blog-back-app/myblog/src/test/java/com/amit/myblog/application/comment/repository/JdbcCommentRepositoryIntegrationTest.java
+/Users/vladislav/Development/yandex/blog/my-blog-back-app/myblog/src/test/java/com/amit/myblog/application/comment/repository/JdbcPostCommentCounterRepositoryIntegrationTest.java
+/Users/vladislav/Development/yandex/blog/my-blog-back-app/myblog/src/test/java/com/amit/myblog/common/BaseDaoIntegrationTest.java
+/Users/vladislav/Development/yandex/blog/my-blog-back-app/myblog/src/test/java/com/amit/myblog/common/util/CommentDaoTestFixtures.java
+/Users/vladislav/Development/yandex/blog/my-blog-back-app/myblog/src/test/java/com/amit/myblog/common/util/PostDaoTestFixtures.java
