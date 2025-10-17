@@ -1,7 +1,8 @@
-package com.amit.myblog.common.api.dto;
+package com.amit.myblog.common.api;
 
 import com.amit.myblog.comment.service.exception.CommentNotFoundException;
 import com.amit.myblog.comment.service.exception.InvalidCommentException;
+import com.amit.myblog.common.api.dto.ErrorDto;
 import com.amit.myblog.post.service.exception.ImageUpsertException;
 import com.amit.myblog.post.service.exception.InvalidImageException;
 import com.amit.myblog.post.service.exception.InvalidPostException;

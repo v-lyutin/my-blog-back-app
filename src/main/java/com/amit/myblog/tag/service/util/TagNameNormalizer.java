@@ -1,7 +1,5 @@
 package com.amit.myblog.tag.service.util;
 
-import org.springframework.util.CollectionUtils;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
@@ -11,7 +9,7 @@ import java.util.stream.Collectors;
 public final class TagNameNormalizer {
 
     public static Set<String> normalizeTagNames(Collection<String> tagNames) {
-        if (CollectionUtils.isEmpty(tagNames)) {
+        if (tagNames == null) {
             return Collections.emptySet();
         }
         return tagNames.stream()
