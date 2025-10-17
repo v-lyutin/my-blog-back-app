@@ -1,6 +1,7 @@
 package com.amit.myblog.application.comment.repository;
 
 import com.amit.myblog.comment.model.Comment;
+import com.amit.myblog.comment.repository.CommentRepository;
 import com.amit.myblog.comment.repository.jdbc.JdbcCommentRepository;
 import com.amit.myblog.common.BaseDaoIntegrationTest;
 import com.amit.myblog.common.util.CommentDaoTestFixtures;
@@ -23,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class JdbcCommentRepositoryIntegrationTest extends BaseDaoIntegrationTest {
 
     @Autowired
-    private JdbcCommentRepository jdbcCommentRepository;
+    private CommentRepository commentRepository;
 
     @Test
     @DisplayName(value = "Should save comment and return saved entity with generated id")
@@ -31,7 +32,7 @@ public class JdbcCommentRepositoryIntegrationTest extends BaseDaoIntegrationTest
         long postId = PostDaoTestFixtures.insertPostAndReturnId(this.jdbcTemplate, "Title", "Text");
 
         Comment commentToSave = new Comment(0L, "Comment", postId);
-        Comment savedComment = this.jdbcCommentRepository.save(commentToSave);
+        Comment savedComment = this.commentRepository.save(commentToSave);
 
         assertThat(savedComment).isNotNull();
         assertThat(savedComment.getId()).isPositive();
@@ -50,7 +51,7 @@ public class JdbcCommentRepositoryIntegrationTest extends BaseDaoIntegrationTest
         long comment2 = CommentDaoTestFixtures.insertCommentAndReturnId(this.jdbcTemplate, postId, "Comment 2");
         long comment3 = CommentDaoTestFixtures.insertCommentAndReturnId(this.jdbcTemplate, postId, "Comment 3");
 
-        List<Comment> comments = this.jdbcCommentRepository.findAllByPostId(postId);
+        List<Comment> comments = this.commentRepository.findAllByPostId(postId);
 
         assertThat(comments).hasSize(3);
         assertThat(comments.get(0).getId()).isEqualTo(comment1);
@@ -64,7 +65,7 @@ public class JdbcCommentRepositoryIntegrationTest extends BaseDaoIntegrationTest
     void findAllByPostId_shouldReturnEmptyListWhenThereAreNoCommentsForGivenPostId() {
         long postId = PostDaoTestFixtures.insertPostAndReturnId(this.jdbcTemplate, "Title C", "Text C");
 
-        List<Comment> comments = this.jdbcCommentRepository.findAllByPostId(postId);
+        List<Comment> comments = this.commentRepository.findAllByPostId(postId);
 
         assertThat(comments).isEmpty();
     }
@@ -75,7 +76,7 @@ public class JdbcCommentRepositoryIntegrationTest extends BaseDaoIntegrationTest
         long postId = PostDaoTestFixtures.insertPostAndReturnId(this.jdbcTemplate, "Title D", "Text D");
         long commentId = CommentDaoTestFixtures.insertCommentAndReturnId(this.jdbcTemplate, postId, "target");
 
-        Optional<Comment> comment = this.jdbcCommentRepository.findByPostIdAndId(postId, commentId);
+        Optional<Comment> comment = this.commentRepository.findByPostIdAndId(postId, commentId);
 
         assertThat(comment).isPresent();
         assertThat(comment.get().getId()).isEqualTo(commentId);
@@ -88,7 +89,7 @@ public class JdbcCommentRepositoryIntegrationTest extends BaseDaoIntegrationTest
     void findByPostIdAndId_shouldReturnEmptyOptionalWhenCommentIsNotFoundByPostIdAndCommentId() {
         long postId = PostDaoTestFixtures.insertPostAndReturnId(this.jdbcTemplate, "Title E", "Text E");
 
-        Optional<Comment> comment = this.jdbcCommentRepository.findByPostIdAndId(postId, 666L);
+        Optional<Comment> comment = this.commentRepository.findByPostIdAndId(postId, 666L);
 
         assertThat(comment).isEmpty();
     }
@@ -100,14 +101,14 @@ public class JdbcCommentRepositoryIntegrationTest extends BaseDaoIntegrationTest
         long commentId = CommentDaoTestFixtures.insertCommentAndReturnId(this.jdbcTemplate, postId, "before");
         Comment commentToUpdate = new Comment(commentId, "after", postId);
 
-        Optional<Comment> updatedComment = this.jdbcCommentRepository.update(commentToUpdate);
+        Optional<Comment> updatedComment = this.commentRepository.update(commentToUpdate);
 
         assertThat(updatedComment).isPresent();
         assertThat(updatedComment.get().getId()).isEqualTo(commentId);
         assertThat(updatedComment.get().getText()).isEqualTo("after");
         assertThat(updatedComment.get().getPostId()).isEqualTo(postId);
 
-        Optional<Comment> loadedComment = this.jdbcCommentRepository.findByPostIdAndId(postId, commentId);
+        Optional<Comment> loadedComment = this.commentRepository.findByPostIdAndId(postId, commentId);
         assertThat(loadedComment).isPresent();
         assertThat(loadedComment.get().getText()).isEqualTo("after");
     }
@@ -118,7 +119,7 @@ public class JdbcCommentRepositoryIntegrationTest extends BaseDaoIntegrationTest
         long postId = PostDaoTestFixtures.insertPostAndReturnId(this.jdbcTemplate, "Title G", "Text G");
         Comment commentToUpdate = new Comment(666L, "irrelevant", postId);
 
-        Optional<Comment> updated = this.jdbcCommentRepository.update(commentToUpdate);
+        Optional<Comment> updated = this.commentRepository.update(commentToUpdate);
 
         assertThat(updated).isEmpty();
     }
@@ -129,10 +130,10 @@ public class JdbcCommentRepositoryIntegrationTest extends BaseDaoIntegrationTest
         long postId = PostDaoTestFixtures.insertPostAndReturnId(this.jdbcTemplate, "Title H", "Text H");
         long commentId = CommentDaoTestFixtures.insertCommentAndReturnId(this.jdbcTemplate, postId, "to delete");
 
-        final boolean isDeleted = this.jdbcCommentRepository.deleteByPostIdAndId(postId, commentId);
+        final boolean isDeleted = this.commentRepository.deleteByPostIdAndId(postId, commentId);
 
         assertThat(isDeleted).isTrue();
-        Optional<Comment> comment = this.jdbcCommentRepository.findByPostIdAndId(postId, commentId);
+        Optional<Comment> comment = this.commentRepository.findByPostIdAndId(postId, commentId);
         assertThat(comment).isEmpty();
     }
 
@@ -141,7 +142,7 @@ public class JdbcCommentRepositoryIntegrationTest extends BaseDaoIntegrationTest
     void deleteByPostIdAndId_shouldReturnFalseWhenTryingToDeleteNonExistentCommentByPostIdAndCommentId() {
         long postId = PostDaoTestFixtures.insertPostAndReturnId(this.jdbcTemplate, "Title I", "Text I");
 
-        boolean isDeleted = this.jdbcCommentRepository.deleteByPostIdAndId(postId, 666L);
+        boolean isDeleted = this.commentRepository.deleteByPostIdAndId(postId, 666L);
 
         assertThat(isDeleted).isFalse();
     }

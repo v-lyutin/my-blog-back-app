@@ -25,6 +25,14 @@ public final class Post {
         this.text = text;
     }
 
+    public Post(Long id, String title, String text, long likesCount, long commentsCount) {
+        this.id = id;
+        this.title = title;
+        this.text = text;
+        this.likesCount = likesCount;
+        this.commentsCount = commentsCount;
+    }
+
     public Long getId() {
         return this.id;
     }

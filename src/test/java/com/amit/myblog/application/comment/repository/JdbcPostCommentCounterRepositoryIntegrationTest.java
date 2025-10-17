@@ -1,5 +1,6 @@
 package com.amit.myblog.application.comment.repository;
 
+import com.amit.myblog.comment.repository.PostCommentCounterRepository;
 import com.amit.myblog.comment.repository.jdbc.JdbcPostCommentCounterRepository;
 import com.amit.myblog.common.BaseDaoIntegrationTest;
 import com.amit.myblog.common.util.PostDaoTestFixtures;
@@ -18,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class JdbcPostCommentCounterRepositoryIntegrationTest extends BaseDaoIntegrationTest {
 
     @Autowired
-    private JdbcPostCommentCounterRepository jdbcPostCommentCounterRepository;
+    private PostCommentCounterRepository postCommentCounterRepository;
 
     @Test
     @DisplayName(value = "Should increment comments_count by post id")
@@ -26,10 +27,10 @@ class JdbcPostCommentCounterRepositoryIntegrationTest extends BaseDaoIntegration
         long postId = PostDaoTestFixtures.insertPostAndReturnId(this.jdbcTemplate, "Title", "Text");
         assertThat(PostDaoTestFixtures.selectCommentsCountByPostId(this.namedParameterJdbcTemplate, postId)).isZero();
 
-        this.jdbcPostCommentCounterRepository.incrementCommentsCountByPostId(postId);
+        this.postCommentCounterRepository.incrementCommentsCountByPostId(postId);
         assertThat(PostDaoTestFixtures.selectCommentsCountByPostId(this.namedParameterJdbcTemplate, postId)).isEqualTo(1L);
 
-        this.jdbcPostCommentCounterRepository.incrementCommentsCountByPostId(postId);
+        this.postCommentCounterRepository.incrementCommentsCountByPostId(postId);
         assertThat(PostDaoTestFixtures.selectCommentsCountByPostId(this.namedParameterJdbcTemplate, postId)).isEqualTo(2L);
     }
 
@@ -38,25 +39,25 @@ class JdbcPostCommentCounterRepositoryIntegrationTest extends BaseDaoIntegration
     void decrementCommentsCountByPostId_shouldDecrementCommentsCountByPostIdButNotBelowZeroWhenDecrementedAfterIncrements() {
         long postId = PostDaoTestFixtures.insertPostAndReturnId(this.jdbcTemplate, "Title", "Text");
 
-        this.jdbcPostCommentCounterRepository.incrementCommentsCountByPostId(postId);
-        this.jdbcPostCommentCounterRepository.incrementCommentsCountByPostId(postId);
+        this.postCommentCounterRepository.incrementCommentsCountByPostId(postId);
+        this.postCommentCounterRepository.incrementCommentsCountByPostId(postId);
         assertThat(PostDaoTestFixtures.selectCommentsCountByPostId(this.namedParameterJdbcTemplate, postId)).isEqualTo(2L);
 
-        this.jdbcPostCommentCounterRepository.decrementCommentsCountByPostId(postId);
+        this.postCommentCounterRepository.decrementCommentsCountByPostId(postId);
         assertThat(PostDaoTestFixtures.selectCommentsCountByPostId(this.namedParameterJdbcTemplate, postId)).isEqualTo(1L);
 
-        this.jdbcPostCommentCounterRepository.decrementCommentsCountByPostId(postId);
+        this.postCommentCounterRepository.decrementCommentsCountByPostId(postId);
         assertThat(PostDaoTestFixtures.selectCommentsCountByPostId(this.namedParameterJdbcTemplate, postId)).isZero();
 
-        this.jdbcPostCommentCounterRepository.decrementCommentsCountByPostId(postId);
+        this.postCommentCounterRepository.decrementCommentsCountByPostId(postId);
         assertThat(PostDaoTestFixtures.selectCommentsCountByPostId(this.namedParameterJdbcTemplate, postId)).isZero();
     }
 
     @Test
     @DisplayName(value = "Should be no-op when incrementing or decrementing for non existent post id (no exception)")
     void shouldBeNoOpWhenIncrementingOrDecrementingForNonExistentPostIdNoException() {
-        this.jdbcPostCommentCounterRepository.incrementCommentsCountByPostId(666L);
-        this.jdbcPostCommentCounterRepository.decrementCommentsCountByPostId(666L);
+        this.postCommentCounterRepository.incrementCommentsCountByPostId(666L);
+        this.postCommentCounterRepository.decrementCommentsCountByPostId(666L);
 
         assertThat(true).isTrue();
     }
