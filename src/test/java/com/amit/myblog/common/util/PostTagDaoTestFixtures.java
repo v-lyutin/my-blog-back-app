@@ -9,6 +9,7 @@ public final class PostTagDaoTestFixtures {
         String query = """
                 INSERT INTO my_blog.post_tag (post_id, tag_id)
                 VALUES (:postId, :tagId)
+                ON CONFLICT (post_id, tag_id) DO NOTHING
                 """;
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("postId", postId)

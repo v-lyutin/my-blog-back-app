@@ -1,4 +1,4 @@
-package com.amit.myblog.tag.service.util;
+package com.amit.myblog.common.util;
 
 import com.amit.myblog.tag.model.Tag;
 import org.springframework.util.CollectionUtils;
@@ -6,12 +6,11 @@ import org.springframework.util.CollectionUtils;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public final class TagNameExtractor {
 
-    public static Set<String> extractTagNames(Collection<Tag> tags) {
+    public static Collection<String> extractTagNames(Collection<Tag> tags) {
         if (CollectionUtils.isEmpty(tags)) {
             return Collections.emptySet();
         }

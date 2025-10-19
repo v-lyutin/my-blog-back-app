@@ -30,7 +30,7 @@ public final class PostDaoTestFixtures {
         );
     }
 
-    private PostDaoTestFixtures postDaoTestFixtures() {
+    private PostDaoTestFixtures() {
         throw new UnsupportedOperationException();
     }
 

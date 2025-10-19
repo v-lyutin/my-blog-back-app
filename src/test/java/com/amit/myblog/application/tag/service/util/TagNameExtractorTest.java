@@ -1,10 +1,11 @@
 package com.amit.myblog.application.tag.service.util;
 
 import com.amit.myblog.tag.model.Tag;
-import com.amit.myblog.tag.service.util.TagNameExtractor;
+import com.amit.myblog.common.util.TagNameExtractor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collection;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -14,7 +15,7 @@ class TagNameExtractorTest {
     @Test
     @DisplayName(value = "Should return empty set when input set is null")
     void extractTagNames_shouldReturnEmptySetWhenInputSetIsNull() {
-        Set<String> result = TagNameExtractor.extractTagNames(null);
+        Collection<String> result = TagNameExtractor.extractTagNames(null);
 
         assertThat(result).isEmpty();
     }
@@ -22,7 +23,7 @@ class TagNameExtractorTest {
     @Test
     @DisplayName(value = "Should return empty set when input set is empty")
     void extractTagNames_shouldReturnEmptySetWhenInputSetIsEmpty() {
-        Set<String> result = TagNameExtractor.extractTagNames(Set.of());
+        Collection<String> result = TagNameExtractor.extractTagNames(Set.of());
 
         assertThat(result).isEmpty();
     }
@@ -32,7 +33,7 @@ class TagNameExtractorTest {
     void extractTagNames_shouldExtractSingleTagNameFromSetWithOneTag() {
         Set<Tag> tags = Set.of(new Tag(1L, "travel"));
 
-        Set<String> result = TagNameExtractor.extractTagNames(tags);
+        Collection<String> result = TagNameExtractor.extractTagNames(tags);
 
         assertThat(result).containsExactly("travel");
     }
@@ -46,7 +47,7 @@ class TagNameExtractorTest {
                 new Tag(3L, "river")
         );
 
-        Set<String> result = TagNameExtractor.extractTagNames(tags);
+        Collection<String> result = TagNameExtractor.extractTagNames(tags);
 
         assertThat(result).containsExactlyInAnyOrder("travel", "nature", "river");
     }
@@ -60,7 +61,7 @@ class TagNameExtractorTest {
                 new Tag(3L, "TRAVEL")
         );
 
-        Set<String> result = TagNameExtractor.extractTagNames(tags);
+        Collection<String> result = TagNameExtractor.extractTagNames(tags);
 
         assertThat(result).containsExactlyInAnyOrder("travel", "TRAVEL");
     }
@@ -73,7 +74,7 @@ class TagNameExtractorTest {
                 new Tag(2L, "ok")
         );
 
-        Set<String> result = TagNameExtractor.extractTagNames(tags);
+        Collection<String> result = TagNameExtractor.extractTagNames(tags);
 
         assertThat(result).containsExactlyInAnyOrder("ok");
     }
