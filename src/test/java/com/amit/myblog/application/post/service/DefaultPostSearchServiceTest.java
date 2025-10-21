@@ -39,7 +39,7 @@ class DefaultPostSearchServiceTest {
         when(this.postSearchRepository.search(null, Set.of(), 10, 0)).thenReturn(Collections.emptyList());
         when(this.postSearchRepository.count(null, Set.of())).thenReturn(0L);
 
-        Page<PostView> page = this.defaultPostSearchService.search("", 1, 10);
+        Page<PostView> page = this.defaultPostSearchService.searchPosts("", 1, 10);
 
         assertTrue(page.items().isEmpty());
         assertFalse(page.hasPrev());
@@ -66,7 +66,7 @@ class DefaultPostSearchServiceTest {
         when(this.postSearchRepository.count(eq(title), eq(tags))).thenReturn(1L);
         when(this.tagService.getTagsByPostIds(List.of(1L))).thenReturn(Map.of(1L, Set.of("a", "b")));
 
-        Page<PostView> result = this.defaultPostSearchService.search(rawQuery, page, size);
+        Page<PostView> result = this.defaultPostSearchService.searchPosts(rawQuery, page, size);
 
         assertEquals(1, result.items().size());
         PostView postView = result.items().getFirst();
@@ -96,7 +96,7 @@ class DefaultPostSearchServiceTest {
                         2L, Set.of("river", "nature")
                 ));
 
-        Page<PostView> page = this.defaultPostSearchService.search("   ", 1, 5);
+        Page<PostView> page = this.defaultPostSearchService.searchPosts("   ", 1, 5);
 
         assertEquals(2, page.items().size());
         assertEquals(Set.of("travel"), page.items().get(0).tags());
@@ -118,7 +118,7 @@ class DefaultPostSearchServiceTest {
         when(this.tagService.getTagsByPostIds(List.of(11L)))
                 .thenReturn(Map.of(11L, Set.of()));
 
-        Page<PostView> page = this.defaultPostSearchService.search("", 2, 10);
+        Page<PostView> page = this.defaultPostSearchService.searchPosts("", 2, 10);
 
         assertEquals(3, page.lastPage());
         assertTrue(page.hasPrev());
@@ -133,7 +133,7 @@ class DefaultPostSearchServiceTest {
         when(this.postSearchRepository.count(null, Set.of()))
                 .thenReturn(0L);
 
-        Page<PostView> page = this.defaultPostSearchService.search(null, 0, 10);
+        Page<PostView> page = this.defaultPostSearchService.searchPosts(null, 0, 10);
 
         assertNotNull(page);
 

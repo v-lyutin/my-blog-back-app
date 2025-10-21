@@ -28,13 +28,13 @@ public final class DefaultPostImageService implements PostImageService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<byte[]> getByPostId(long postId) {
+    public Optional<byte[]> getImageByPostId(long postId) {
         return this.postImageRepository.findByPostId(postId);
     }
 
     @Override
     @Transactional
-    public void upsertByPostId(long postId, MultipartFile multipartFile) {
+    public void upsertImageByPostId(long postId, MultipartFile multipartFile) {
         try {
             if (multipartFile == null || multipartFile.isEmpty()) {
                 throw new InvalidImageException("Uploaded file must not be empty.");

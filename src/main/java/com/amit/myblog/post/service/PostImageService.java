@@ -6,8 +6,8 @@ import java.util.Optional;
 
 public interface PostImageService {
 
-    Optional<byte[]> getByPostId(long postId);
+    Optional<byte[]> getImageByPostId(long postId);
 
-    void upsertByPostId(long postId, MultipartFile multipartFile);
+    void upsertImageByPostId(long postId, MultipartFile multipartFile);
 
 }

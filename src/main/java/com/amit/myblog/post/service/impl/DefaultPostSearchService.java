@@ -31,7 +31,7 @@ public final class DefaultPostSearchService implements PostSearchService {
     }
 
     @Override
-    public Page<PostView> search(String rawQuery, int pageNumber, int pageSize) {
+    public Page<PostView> searchPosts(String rawQuery, int pageNumber, int pageSize) {
         int offset = Math.max(0, (pageNumber - 1) * pageSize);
         SearchCriteria searchCriteria = RawQueryParser.parse(rawQuery);
         List<Post> posts = this.postSearchRepository.search(

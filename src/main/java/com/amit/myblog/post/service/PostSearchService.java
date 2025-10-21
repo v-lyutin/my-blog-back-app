@@ -5,6 +5,6 @@ import com.amit.myblog.post.model.PostView;
 
 public interface PostSearchService {
 
-    Page<PostView> search(String rawQuery, int pageNumber, int pageSize);
+    Page<PostView> searchPosts(String rawQuery, int pageNumber, int pageSize);
 
 }

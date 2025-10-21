@@ -41,7 +41,7 @@ class DefaultPostImageServiceTest {
         byte[] data = new byte[] {1, 2, 3};
         when(this.postImageRepository.findByPostId(postId)).thenReturn(Optional.of(data));
 
-        Optional<byte[]> out = this.defaultPostImageService.getByPostId(postId);
+        Optional<byte[]> out = this.defaultPostImageService.getImageByPostId(postId);
 
         assertThat(out).isPresent();
         assertThat(out.get()).containsExactly(1, 2, 3);
@@ -55,7 +55,7 @@ class DefaultPostImageServiceTest {
         long postId = 8L;
         when(this.postImageRepository.findByPostId(postId)).thenReturn(Optional.empty());
 
-        Optional<byte[]> out = this.defaultPostImageService.getByPostId(postId);
+        Optional<byte[]> out = this.defaultPostImageService.getImageByPostId(postId);
 
         assertThat(out).isEmpty();
         verify(this.postImageRepository).findByPostId(postId);
@@ -67,7 +67,7 @@ class DefaultPostImageServiceTest {
     void upsertByPostId_shouldThrowInvalidImageException_whenFileIsNull() {
         InvalidImageException ex = assertThrows(
                 InvalidImageException.class,
-                () -> this.defaultPostImageService.upsertByPostId(1L, null)
+                () -> this.defaultPostImageService.upsertImageByPostId(1L, null)
         );
         assertThat(ex).hasMessageContaining("empty");
         verifyNoInteractions(this.postRepository, this.postImageRepository);
@@ -81,7 +81,7 @@ class DefaultPostImageServiceTest {
 
         InvalidImageException ex = assertThrows(
                 InvalidImageException.class,
-                () -> this.defaultPostImageService.upsertByPostId(1L, file)
+                () -> this.defaultPostImageService.upsertImageByPostId(1L, file)
         );
         assertThat(ex).hasMessageContaining("empty");
         verifyNoInteractions(this.postRepository, this.postImageRepository);
@@ -97,7 +97,7 @@ class DefaultPostImageServiceTest {
 
         ResourceNotFoundException exception = assertThrows(
                 ResourceNotFoundException.class,
-                () -> this.defaultPostImageService.upsertByPostId(postId, file)
+                () -> this.defaultPostImageService.upsertImageByPostId(postId, file)
         );
         assertThat(exception).hasMessageContaining("Post with ID 42 not found");
 
@@ -118,7 +118,7 @@ class DefaultPostImageServiceTest {
 
         ImageUpsertException ex = assertThrows(
                 ImageUpsertException.class,
-                () -> this.defaultPostImageService.upsertByPostId(postId, file)
+                () -> this.defaultPostImageService.upsertImageByPostId(postId, file)
         );
         assertThat(ex).hasMessageContaining("Failed to read uploaded image");
 
@@ -142,7 +142,7 @@ class DefaultPostImageServiceTest {
 
         InvalidImageException ex = assertThrows(
                 InvalidImageException.class,
-                () -> this.defaultPostImageService.upsertByPostId(postId, file)
+                () -> this.defaultPostImageService.upsertImageByPostId(postId, file)
         );
         assertThat(ex).hasMessageContaining("exceeds max size");
 
@@ -163,7 +163,7 @@ class DefaultPostImageServiceTest {
 
         ImageUpsertException exception = assertThrows(
                 ImageUpsertException.class,
-                () -> this.defaultPostImageService.upsertByPostId(postId, file)
+                () -> this.defaultPostImageService.upsertImageByPostId(postId, file)
         );
         assertThat(exception).hasMessageContaining("Failed to upsert image for post 12");
 
@@ -184,7 +184,7 @@ class DefaultPostImageServiceTest {
         when(file.getBytes()).thenReturn(new byte[] {1, 2, 3});
         when(this.postImageRepository.upsertByPostId(eq(postId), any(byte[].class))).thenReturn(true);
 
-        this.defaultPostImageService.upsertByPostId(postId, file);
+        this.defaultPostImageService.upsertImageByPostId(postId, file);
 
         InOrder inOrder = inOrder(this.postRepository, file, this.postImageRepository);
         inOrder.verify(this.postRepository).existsById(postId);
