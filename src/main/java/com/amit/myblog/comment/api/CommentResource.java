@@ -6,6 +6,7 @@ import com.amit.myblog.comment.api.dto.response.CommentResponse;
 import com.amit.myblog.comment.api.mapper.CommentMapper;
 import com.amit.myblog.comment.model.Comment;
 import com.amit.myblog.comment.service.CommentService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -43,7 +44,7 @@ public final class CommentResource {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CommentResponse> addComment(@PathVariable(value = "postId") long postId,
-                                                      @RequestBody CommentCreateRequest commentCreateRequest) {
+                                                      @Valid @RequestBody CommentCreateRequest commentCreateRequest) {
         Comment comment = this.commentService.addComment(
                 postId,
                 this.commentMapper.toComment(commentCreateRequest)
@@ -54,7 +55,7 @@ public final class CommentResource {
     @PutMapping(value = "/{commentId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CommentResponse> editComment(@PathVariable(value = "postId") long postId,
                                                        @PathVariable(value = "commentId") long commentId,
-                                                       @RequestBody CommentUpdateRequest commentUpdateRequest) {
+                                                       @Valid @RequestBody CommentUpdateRequest commentUpdateRequest) {
         Comment comment = this.commentService.editComment(
                 postId,
                 commentId,

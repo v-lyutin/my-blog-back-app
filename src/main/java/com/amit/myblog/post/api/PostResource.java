@@ -6,6 +6,7 @@ import com.amit.myblog.post.api.dto.response.PostResponse;
 import com.amit.myblog.post.api.mapper.PostMapper;
 import com.amit.myblog.post.model.PostView;
 import com.amit.myblog.post.service.PostService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -33,14 +34,14 @@ public final class PostResource {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PostResponse> addPost(@RequestBody PostCreateRequest postCreateRequest) {
+    public ResponseEntity<PostResponse> addPost(@Valid @RequestBody PostCreateRequest postCreateRequest) {
         PostView postView = this.postService.addPost(this.postMapper.toPostView(postCreateRequest));
         return ResponseEntity.status(HttpStatus.CREATED).body(this.postMapper.toPostResponse(postView));
     }
 
     @PutMapping(value = "/{postId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PostResponse> editPost(@PathVariable(value = "postId") long postId,
-                                                 @RequestBody PostUpdateRequest postUpdateRequest) {
+                                                 @Valid @RequestBody PostUpdateRequest postUpdateRequest) {
         PostView postView = this.postService.editPost(postId, this.postMapper.toPostView(postUpdateRequest));
         return ResponseEntity.ok(this.postMapper.toPostResponse(postView));
     }
