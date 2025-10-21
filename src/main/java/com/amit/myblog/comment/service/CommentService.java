@@ -6,14 +6,14 @@ import java.util.List;
 
 public interface CommentService {
 
-    List<Comment> getAllByPostId(long postId);
+    List<Comment> getAllCommentsByPostId(long postId);
 
-    Comment getByPostIdAndId(long postId, long commentId);
+    Comment getCommentByPostIdAndCommentId(long postId, long commentId);
 
-    Comment create(long postId, Comment comment);
+    Comment addComment(long postId, Comment comment);
 
-    Comment update(long postId, long commentId, Comment comment);
+    Comment editComment(long postId, long commentId, Comment comment);
 
-    void deleteByPostIdAndId(long postId, long commentId);
+    void deleteCommentByPostIdAndCommentId(long postId, long commentId);
 
 }
