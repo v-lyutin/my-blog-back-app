@@ -35,47 +35,47 @@ public final class GlobalExceptionHandler {
 
     @ExceptionHandler(value = ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException exception, HttpServletRequest request) {
-        ErrorResponse errorDto = new ErrorResponse(exception.getMessage(), request.getRequestURI());
+        ErrorResponse errorResponse = new ErrorResponse(exception.getMessage(), request.getRequestURI());
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(errorDto);
+                .body(errorResponse);
     }
 
     @ExceptionHandler(value = ServiceException.class)
     public ResponseEntity<ErrorResponse> handleServiceException(ServiceException exception, HttpServletRequest request) {
-        ErrorResponse errorDto = new ErrorResponse(exception.getMessage(), request.getRequestURI());
+        ErrorResponse errorResponse = new ErrorResponse(exception.getMessage(), request.getRequestURI());
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(errorDto);
+                .body(errorResponse);
     }
 
     @ExceptionHandler(value = ImageUpsertException.class)
     public ResponseEntity<ErrorResponse> handleImageUpsertException(ImageUpsertException exception, HttpServletRequest request) {
-        ErrorResponse errorDto = new ErrorResponse(exception.getMessage(), request.getRequestURI());
+        ErrorResponse errorResponse = new ErrorResponse(exception.getMessage(), request.getRequestURI());
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(errorDto);
+                .body(errorResponse);
     }
 
     @ExceptionHandler(value = InvalidImageException.class)
     public ResponseEntity<ErrorResponse> handleInvalidImageException(InvalidImageException exception, HttpServletRequest request) {
-        ErrorResponse errorDto = new ErrorResponse(exception.getMessage(), request.getRequestURI());
+        ErrorResponse errorResponse = new ErrorResponse(exception.getMessage(), request.getRequestURI());
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(errorDto);
+                .body(errorResponse);
     }
 
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception exception, HttpServletRequest request) {
-        ErrorResponse errorDto = new ErrorResponse(exception.getMessage(), request.getRequestURI());
+        ErrorResponse errorResponse = new ErrorResponse(exception.getMessage(), request.getRequestURI());
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(errorDto);
+                .body(errorResponse);
     }
 
 }
