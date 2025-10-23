@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-public final class DefaultCommentService implements CommentService {
+public class DefaultCommentService implements CommentService {
 
     private final CommentRepository commentRepository;
 

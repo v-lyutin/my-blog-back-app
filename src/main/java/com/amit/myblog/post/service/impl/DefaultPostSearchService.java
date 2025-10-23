@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Service
-public final class DefaultPostSearchService implements PostSearchService {
+public class DefaultPostSearchService implements PostSearchService {
 
     private final PostSearchRepository postSearchRepository;
 

@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public final class JdbcCommentRepository implements CommentRepository {
+public class JdbcCommentRepository implements CommentRepository {
 
     private static final RowMapper<Comment> COMMENT_MAPPER = CommentRowMapper.rowMapper();
 

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public final class JdbcPostImageRepository implements PostImageRepository {
+public class JdbcPostImageRepository implements PostImageRepository {
 
     private static final RowMapper<byte[]> DATA_MAPPER = PostImageRowMapper.rowMapper();
 

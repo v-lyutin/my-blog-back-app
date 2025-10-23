@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.OptionalLong;
 
 @Repository
-public final class JdbcPostLikeRepository implements PostLikeRepository {
+public class JdbcPostLikeRepository implements PostLikeRepository {
 
     private static final RowMapper<Long> POST_LIKE_MAPPER = PostLikeRowMapper.rowMapper();
 

@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 @Repository
-public final class JdbcPostSearchRepository implements PostSearchRepository {
+public class JdbcPostSearchRepository implements PostSearchRepository {
 
     private static final RowMapper<Post> POST_MAPPER = PostRowMapper.rowMapper();
 

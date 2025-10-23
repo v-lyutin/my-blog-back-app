@@ -14,7 +14,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public final class DefaultTagService implements TagService {
+public class DefaultTagService implements TagService {
 
     private final TagRepository tagRepository;
 

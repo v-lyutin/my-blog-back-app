@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public final class JdbcPostRepository implements PostRepository {
+public class JdbcPostRepository implements PostRepository {
 
     private static final RowMapper<Post> POST_MAPPER = PostRowMapper.rowMapper();
 

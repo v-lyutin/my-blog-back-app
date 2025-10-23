@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 @Service
-public final class DefaultPostImageService implements PostImageService {
+public class DefaultPostImageService implements PostImageService {
 
     private final PostImageRepository postImageRepository;
 

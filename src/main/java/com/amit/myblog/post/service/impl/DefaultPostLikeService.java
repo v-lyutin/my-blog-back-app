@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public final class DefaultPostLikeService implements PostLikeService {
+public class DefaultPostLikeService implements PostLikeService {
 
     private final PostLikeRepository postLikeRepository;
 

@@ -8,7 +8,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public final class JdbcPostCommentCounterRepository implements PostCommentCounterRepository {
+public class JdbcPostCommentCounterRepository implements PostCommentCounterRepository {
 
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 

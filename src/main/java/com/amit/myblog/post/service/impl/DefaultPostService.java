@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Set;
 
 @Service
-public final class DefaultPostService implements PostService {
+public class DefaultPostService implements PostService {
 
     private final PostRepository postRepository;
 

@@ -18,7 +18,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.*;
 
 @Repository
-public final class JdbcTagRepository implements TagRepository {
+public class JdbcTagRepository implements TagRepository {
 
     private static final RowMapper<Tag> TAG_MAPPER = TagRowMapper.rowMapper();
 
