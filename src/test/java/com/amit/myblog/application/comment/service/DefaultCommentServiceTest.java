@@ -2,6 +2,7 @@ package com.amit.myblog.application.comment.service;
 
 import com.amit.myblog.comment.model.Comment;
 import com.amit.myblog.comment.repository.CommentRepository;
+import com.amit.myblog.comment.repository.PostCommentCounterRepository;
 import com.amit.myblog.comment.service.DefaultCommentService;
 import com.amit.myblog.common.excpetion.ResourceNotFoundException;
 import com.amit.myblog.common.excpetion.ServiceException;
@@ -26,6 +27,9 @@ class DefaultCommentServiceTest {
 
     @Mock
     private CommentRepository commentRepository;
+
+    @Mock
+    private PostCommentCounterRepository postCommentCounterRepository;
 
     @Mock
     private PostRepository postRepository;
@@ -101,7 +105,7 @@ class DefaultCommentServiceTest {
                 .isInstanceOf(ServiceException.class)
                 .hasMessageContaining("IDs for post must not be different");
 
-        verifyNoInteractions(this.commentRepository, this.postRepository);
+        verifyNoInteractions(this.commentRepository, this.postRepository, this.postCommentCounterRepository);
     }
 
     @Test
@@ -117,26 +121,29 @@ class DefaultCommentServiceTest {
 
         verify(this.postRepository).existsById(postId);
         verifyNoMoreInteractions(this.postRepository);
-        verifyNoInteractions(this.commentRepository);
+        verifyNoInteractions(this.commentRepository, this.postCommentCounterRepository);
     }
 
     @Test
-    @DisplayName(value = "Should save comment when post exists and return persisted entity")
-    void addComment_shouldSaveAndReturnEntityWhenPostExists() {
+    @DisplayName(value = "Should save comment first, then increment post comments counter")
+    void addComment_shouldSaveThenIncrementCounterWhenPostExists() {
         long postId = 4L;
-        Comment commentToCreate = new Comment(0L, "Comment", postId);
-        Comment createdComment = new Comment(42L, "Comment", postId);
+        Comment toCreate = new Comment(0L, "Comment", postId);
+        Comment created  = new Comment(42L, "Comment", postId);
+
         when(this.postRepository.existsById(postId)).thenReturn(true);
-        when(this.commentRepository.save(commentToCreate)).thenReturn(createdComment);
+        when(this.commentRepository.save(toCreate)).thenReturn(created);
 
-        Comment out = this.defaultCommentService.addComment(postId, commentToCreate);
+        Comment out = this.defaultCommentService.addComment(postId, toCreate);
 
-        assertThat(out).isEqualTo(createdComment);
+        assertThat(out).isEqualTo(created);
 
-        InOrder inOrder = inOrder(this.postRepository, this.commentRepository);
+        InOrder inOrder = inOrder(this.postRepository, this.commentRepository, this.postCommentCounterRepository);
         inOrder.verify(this.postRepository).existsById(postId);
-        inOrder.verify(this.commentRepository).save(commentToCreate);
-        verifyNoMoreInteractions(this.postRepository, this.commentRepository);
+        inOrder.verify(this.commentRepository).save(toCreate);
+        inOrder.verify(this.postCommentCounterRepository).incrementCommentsCountByPostId(postId);
+
+        verifyNoMoreInteractions(this.postRepository, this.commentRepository, this.postCommentCounterRepository);
     }
 
     @Test
@@ -211,21 +218,24 @@ class DefaultCommentServiceTest {
     }
 
     @Test
-    @DisplayName(value = "Should delete comment and complete silently when deletion happened")
-    void deleteCommentByPostIdAndCommentId_shouldCompleteWhenDeleted() {
+    @DisplayName(value = "Should delete comment first, then decrement post comments counter when deletion happened")
+    void deleteCommentByPostIdAndCommentId_shouldDeleteThenDecrementWhenDeleted() {
         long postId = 2L;
         long commentId = 33L;
         when(this.commentRepository.deleteByPostIdAndId(postId, commentId)).thenReturn(true);
 
         this.defaultCommentService.deleteCommentByPostIdAndCommentId(postId, commentId);
 
-        verify(this.commentRepository).deleteByPostIdAndId(postId, commentId);
-        verifyNoMoreInteractions(this.commentRepository, this.postRepository);
+        InOrder inOrder = inOrder(this.commentRepository, this.postCommentCounterRepository);
+        inOrder.verify(this.commentRepository).deleteByPostIdAndId(postId, commentId);
+        inOrder.verify(this.postCommentCounterRepository).decrementCommentsCountByPostId(postId);
+
+        verifyNoMoreInteractions(this.commentRepository, this.postCommentCounterRepository);
     }
 
     @Test
-    @DisplayName(value = "Should throw ResourceNotFoundException when deletion did not happen")
-    void deleteCommentByPostIdAndCommentId_shouldThrowWhenNotDeleted() {
+    @DisplayName(value = "Should not decrement counter and throw when deletion did not happen")
+    void deleteCommentByPostIdAndCommentId_shouldThrowAndNotDecrementWhenNotDeleted() {
         long postId = 2L;
         long commentId = 33L;
         when(this.commentRepository.deleteByPostIdAndId(postId, commentId)).thenReturn(false);
@@ -236,7 +246,8 @@ class DefaultCommentServiceTest {
                 .hasMessageContaining("post with ID " + postId);
 
         verify(this.commentRepository).deleteByPostIdAndId(postId, commentId);
-        verifyNoMoreInteractions(this.commentRepository, this.postRepository);
+        verify(this.postCommentCounterRepository, never()).decrementCommentsCountByPostId(anyLong());
+        verifyNoMoreInteractions(this.commentRepository, this.postCommentCounterRepository);
     }
 
 }

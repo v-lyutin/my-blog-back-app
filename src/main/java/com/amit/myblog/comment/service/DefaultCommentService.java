@@ -2,6 +2,7 @@ package com.amit.myblog.comment.service;
 
 import com.amit.myblog.comment.model.Comment;
 import com.amit.myblog.comment.repository.CommentRepository;
+import com.amit.myblog.comment.repository.PostCommentCounterRepository;
 import com.amit.myblog.common.excpetion.ResourceNotFoundException;
 import com.amit.myblog.common.excpetion.ServiceException;
 import com.amit.myblog.post.repository.PostRepository;
@@ -16,11 +17,16 @@ public class DefaultCommentService implements CommentService {
 
     private final CommentRepository commentRepository;
 
+    private final PostCommentCounterRepository postCommentCounterRepository;
+
     private final PostRepository postRepository;
 
     @Autowired
-    public DefaultCommentService(CommentRepository commentRepository, PostRepository postRepository) {
+    public DefaultCommentService(CommentRepository commentRepository,
+                                 PostCommentCounterRepository postCommentCounterRepository,
+                                 PostRepository postRepository) {
         this.commentRepository = commentRepository;
+        this.postCommentCounterRepository = postCommentCounterRepository;
         this.postRepository = postRepository;
     }
 
@@ -51,7 +57,9 @@ public class DefaultCommentService implements CommentService {
         if (!this.postRepository.existsById(postId)) {
             throw new ResourceNotFoundException("Post with ID %d not found.".formatted(postId));
         }
-        return this.commentRepository.save(comment);
+        Comment savedComment = this.commentRepository.save(comment);
+        this.postCommentCounterRepository.incrementCommentsCountByPostId(postId);
+        return savedComment;
     }
 
     @Override
@@ -81,6 +89,7 @@ public class DefaultCommentService implements CommentService {
                     "Comment with ID %d for post with ID %d not found.".formatted(commentId, postId)
             );
         }
+        this.postCommentCounterRepository.decrementCommentsCountByPostId(postId);
     }
 
 }
