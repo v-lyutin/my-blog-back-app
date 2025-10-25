@@ -1,8 +1,9 @@
 package com.amit.myblog.application.comment.service;
 
 import com.amit.myblog.comment.model.Comment;
+import com.amit.myblog.comment.model.event.CommentCreatedEvent;
+import com.amit.myblog.comment.model.event.CommentDeletedEvent;
 import com.amit.myblog.comment.repository.CommentRepository;
-import com.amit.myblog.comment.repository.PostCommentCounterRepository;
 import com.amit.myblog.comment.service.DefaultCommentService;
 import com.amit.myblog.common.excpetion.ResourceNotFoundException;
 import com.amit.myblog.common.excpetion.ServiceException;
@@ -10,10 +11,13 @@ import com.amit.myblog.post.repository.PostRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatcher;
 import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.PayloadApplicationEvent;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,10 +33,10 @@ class DefaultCommentServiceTest {
     private CommentRepository commentRepository;
 
     @Mock
-    private PostCommentCounterRepository postCommentCounterRepository;
+    private PostRepository postRepository;
 
     @Mock
-    private PostRepository postRepository;
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @InjectMocks
     private DefaultCommentService defaultCommentService;
@@ -92,7 +96,7 @@ class DefaultCommentServiceTest {
                 .isInstanceOf(ServiceException.class)
                 .hasMessageContaining("must not be null");
 
-        verifyNoInteractions(this.commentRepository, this.postRepository);
+        verifyNoInteractions(this.commentRepository, this.postRepository, this.applicationEventPublisher);
     }
 
     @Test
@@ -105,7 +109,7 @@ class DefaultCommentServiceTest {
                 .isInstanceOf(ServiceException.class)
                 .hasMessageContaining("IDs for post must not be different");
 
-        verifyNoInteractions(this.commentRepository, this.postRepository, this.postCommentCounterRepository);
+        verifyNoInteractions(this.commentRepository, this.postRepository, this.applicationEventPublisher);
     }
 
     @Test
@@ -121,29 +125,40 @@ class DefaultCommentServiceTest {
 
         verify(this.postRepository).existsById(postId);
         verifyNoMoreInteractions(this.postRepository);
-        verifyNoInteractions(this.commentRepository, this.postCommentCounterRepository);
+        verifyNoInteractions(this.commentRepository, this.applicationEventPublisher);
     }
 
     @Test
-    @DisplayName(value = "Should save comment first, then increment post comments counter")
-    void addComment_shouldSaveThenIncrementCounterWhenPostExists() {
+    @DisplayName(value = "Should save comment then publish CommentCreatedEvent")
+    void addComment_shouldSaveThenPublishCreatedEvent() {
         long postId = 4L;
-        Comment toCreate = new Comment(0L, "Comment", postId);
-        Comment created  = new Comment(42L, "Comment", postId);
+        Comment commentToCreate = new Comment(0L, "Comment", postId);
+        Comment createdComment  = new Comment(42L, "Comment", postId);
 
         when(this.postRepository.existsById(postId)).thenReturn(true);
-        when(this.commentRepository.save(toCreate)).thenReturn(created);
+        when(this.commentRepository.save(commentToCreate)).thenReturn(createdComment);
 
-        Comment out = this.defaultCommentService.addComment(postId, toCreate);
+        Comment out = this.defaultCommentService.addComment(postId, commentToCreate);
 
-        assertThat(out).isEqualTo(created);
+        assertThat(out).isEqualTo(createdComment);
 
-        InOrder inOrder = inOrder(this.postRepository, this.commentRepository, this.postCommentCounterRepository);
+        InOrder inOrder = inOrder(this.postRepository, this.commentRepository, this.applicationEventPublisher);
         inOrder.verify(this.postRepository).existsById(postId);
-        inOrder.verify(this.commentRepository).save(toCreate);
-        inOrder.verify(this.postCommentCounterRepository).incrementCommentsCountByPostId(postId);
+        inOrder.verify(this.commentRepository).save(commentToCreate);
+        inOrder.verify(this.applicationEventPublisher).publishEvent(
+                argThat((ArgumentMatcher<Object>) event -> {
+                    if (event instanceof CommentCreatedEvent(long expectedId, long expectedCommentId)) {
+                        return expectedId == postId && expectedCommentId == 42L;
+                    }
+                    if (event instanceof PayloadApplicationEvent<?> payloadApplicationEvent) {
+                        Object payloadApplicationEventPayload = payloadApplicationEvent.getPayload();
+                        return payloadApplicationEventPayload instanceof CommentCreatedEvent(long expectedId, long expectedCommentId) && expectedId == postId && expectedCommentId == 42L;
+                    }
+                    return false;
+                })
+        );
 
-        verifyNoMoreInteractions(this.postRepository, this.commentRepository, this.postCommentCounterRepository);
+        verifyNoMoreInteractions(this.postRepository, this.commentRepository, this.applicationEventPublisher);
     }
 
     @Test
@@ -226,11 +241,22 @@ class DefaultCommentServiceTest {
 
         this.defaultCommentService.deleteCommentByPostIdAndCommentId(postId, commentId);
 
-        InOrder inOrder = inOrder(this.commentRepository, this.postCommentCounterRepository);
+        InOrder inOrder = inOrder(this.commentRepository, this.applicationEventPublisher);
         inOrder.verify(this.commentRepository).deleteByPostIdAndId(postId, commentId);
-        inOrder.verify(this.postCommentCounterRepository).decrementCommentsCountByPostId(postId);
+        inOrder.verify(this.applicationEventPublisher).publishEvent(
+                argThat((ArgumentMatcher<Object>) event -> {
+                    if (event instanceof CommentDeletedEvent(long expectedId, long expectedCommentId)) {
+                        return expectedId == postId && expectedCommentId == 33L;
+                    }
+                    if (event instanceof PayloadApplicationEvent<?> payloadApplicationEvent) {
+                        Object payloadApplicationEventPayload = payloadApplicationEvent.getPayload();
+                        return payloadApplicationEventPayload instanceof CommentDeletedEvent(long expectedId, long expectedCommentId) && expectedId == postId && expectedCommentId == 33L;
+                    }
+                    return false;
+                })
+        );
 
-        verifyNoMoreInteractions(this.commentRepository, this.postCommentCounterRepository);
+        verifyNoMoreInteractions(this.commentRepository, this.applicationEventPublisher);
     }
 
     @Test
@@ -246,8 +272,8 @@ class DefaultCommentServiceTest {
                 .hasMessageContaining("post with ID " + postId);
 
         verify(this.commentRepository).deleteByPostIdAndId(postId, commentId);
-        verify(this.postCommentCounterRepository, never()).decrementCommentsCountByPostId(anyLong());
-        verifyNoMoreInteractions(this.commentRepository, this.postCommentCounterRepository);
+        verifyNoMoreInteractions(this.commentRepository);
+        verifyNoInteractions(this.applicationEventPublisher);
     }
 
 }

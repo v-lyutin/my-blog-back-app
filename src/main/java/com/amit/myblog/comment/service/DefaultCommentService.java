@@ -1,12 +1,14 @@
 package com.amit.myblog.comment.service;
 
 import com.amit.myblog.comment.model.Comment;
+import com.amit.myblog.comment.model.event.CommentCreatedEvent;
+import com.amit.myblog.comment.model.event.CommentDeletedEvent;
 import com.amit.myblog.comment.repository.CommentRepository;
-import com.amit.myblog.comment.repository.PostCommentCounterRepository;
 import com.amit.myblog.common.excpetion.ResourceNotFoundException;
 import com.amit.myblog.common.excpetion.ServiceException;
 import com.amit.myblog.post.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,16 +19,16 @@ public class DefaultCommentService implements CommentService {
 
     private final CommentRepository commentRepository;
 
-    private final PostCommentCounterRepository postCommentCounterRepository;
-
     private final PostRepository postRepository;
+
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
     public DefaultCommentService(CommentRepository commentRepository,
-                                 PostCommentCounterRepository postCommentCounterRepository,
-                                 PostRepository postRepository) {
+                                 PostRepository postRepository,
+                                 ApplicationEventPublisher applicationEventPublisher) {
         this.commentRepository = commentRepository;
-        this.postCommentCounterRepository = postCommentCounterRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
         this.postRepository = postRepository;
     }
 
@@ -58,7 +60,7 @@ public class DefaultCommentService implements CommentService {
             throw new ResourceNotFoundException("Post with ID %d not found.".formatted(postId));
         }
         Comment savedComment = this.commentRepository.save(comment);
-        this.postCommentCounterRepository.incrementCommentsCountByPostId(postId);
+        this.applicationEventPublisher.publishEvent(new CommentCreatedEvent(postId, savedComment.getId()));
         return savedComment;
     }
 
@@ -89,7 +91,7 @@ public class DefaultCommentService implements CommentService {
                     "Comment with ID %d for post with ID %d not found.".formatted(commentId, postId)
             );
         }
-        this.postCommentCounterRepository.decrementCommentsCountByPostId(postId);
+        this.applicationEventPublisher.publishEvent(new CommentDeletedEvent(postId, commentId));
     }
 
 }
